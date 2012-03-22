@@ -14,7 +14,7 @@ use BRS\PageBundle\Entity\Page;
 /**
  * Member controller.
  *
- * @Route("/page")
+ * @Route("/admin/page")
  */
 class PageAdminController extends AdminController
 {
