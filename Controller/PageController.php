@@ -26,6 +26,11 @@ class PageController extends WidgetController
 	public function indexAction()
 	{		
 		$page = $this->lookupPage('home');
+		
+		if(!is_object($page)){
+			
+			return $this->render('BRSFrontBundle:Default:index.html.twig', array('title' => 'Hello World!'));
+		}
 			
 		$vars = array(
 			'page' => $page,
