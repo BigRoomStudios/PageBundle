@@ -1,0 +1,11 @@
+{% extends 'BRSFrontBundle:Frame:base.html.twig' %}
+
+{% block title %}{{ page.title }}{% endblock %}
+
+{% block container %}
+
+	{# route: {{ route }} #}
+	
+	{% include 'BRSPageBundle:Page:content.html.twig' %}
+	
+{% endblock %}

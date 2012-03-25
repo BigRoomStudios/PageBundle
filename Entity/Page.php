@@ -62,7 +62,7 @@ class Page extends SuperEntity
 	/**
      * @ORM\OneToMany(targetEntity="Content", mappedBy="page")
      */
-    protected $content;
+    public $content;
 
     public function __construct()
     {
