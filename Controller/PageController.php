@@ -4,6 +4,8 @@ namespace BRS\PageBundle\Controller;
 
 use BRS\CoreBundle\Core\WidgetController;
 
+use Symfony\Component\HttpFoundation\Response;
+
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -14,6 +16,25 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
  */
 class PageController extends WidgetController
 {
+
+	/**
+	 * Displays a form to create a new entity for this admin module
+	 *
+	 * @Route("/")
+	 * @Template("BRSPageBundle:Page:default.html.twig")
+	 */
+	public function indexAction()
+	{		
+		$page = $this->lookupPage('home');
+			
+		$vars = array(
+			'page' => $page,
+		);
+			
+		return $vars;
+	}
+	
+	
 	/**
 	 * display page content for a given dynamic route
 	 *
@@ -22,13 +43,25 @@ class PageController extends WidgetController
 	 */
 	public function pageAction($route)
 	{
-		$page = $this->getRepository('BRSPageBundle:Page')->findOneByRoute($route);
-					
+		$page = $this->lookupPage($route);
+		
+		if(!is_object($page)){
+			
+			throw $this->createNotFoundException('This is not the page you\'re looking for...');
+		}
+				
 		$vars = array(
 			'route' => $route,
 			'page' => $page,
 		);
 			
 		return $vars;
+	}
+	
+	protected function lookupPage($route)
+	{
+		$page = $this->getRepository('BRSPageBundle:Page')->findOneByRoute($route);
+		
+		return $page;
 	}
 }
