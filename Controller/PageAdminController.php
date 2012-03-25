@@ -8,8 +8,11 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use BRS\CoreBundle\Core\Widget\ListWidget;
 use BRS\CoreBundle\Core\Widget\EditFormWidget;
+use BRS\CoreBundle\Core\Widget\PanelWidget;
 use BRS\AdminBundle\Controller\AdminController;
 use BRS\PageBundle\Entity\Page;
+use BRS\PageBundle\Entity\Content;
+use BRS\PageBundle\Widget\ContentPanel;
 
 /**
  * Member controller.
@@ -44,10 +47,6 @@ class PageAdminController extends AdminController
 			'route' => array(
 				'type' => 'text',
 			),
-			
-			'description' => array(
-				'type' => 'text',
-			),
 		);
 		
 		$list_widget = new ListWidget();
@@ -55,68 +54,44 @@ class PageAdminController extends AdminController
 		$this->addWidget($list_widget, 'list_pages');
 	
 		$edit_fields = array(
-			
-			'config' => array(
-			
-				'type' => 'group',
-				'fields' => array(
-			
-					'title' => array(
-						'type' => 'text',
-						'required' => true,
-						'attr' => array(
-							'class' => 'valid-alpha'
-						)
-					),
-					
-					'route' => array(
-						'type' => 'text',
-						'required' => true,
-						'attr' => array(
-							'class' => 'valid-route'
-						)
-					),
-					
-				),
-			),
-			
-			'details' => array(
-			
-				'type' => 'group',
-				'fields' => array(
-			
-					'description' => array(
-						'type' => 'textarea',
-						'required' => false,
-						'attr' => array(
-							'class' => ''
-						),
-					),
-				),
-			),	
-		);
 		
-	
-/*		$edit_fields = array(
 			'title' => array(
 				'type' => 'text',
+				'required' => true,
 			),
+			
 			'route' => array(
 				'type' => 'text',
-			),
-			'description' => array(
-				'type' => 'textarea',
+				'required' => true,
+				'attr' => array(
+					'class' => 'valid-route'
+				)
 			),
 		);
-*/		
-		$edit_widget = new EditFormWidget();
-		$edit_widget->setFields($edit_fields);
-		$edit_widget->setSuccessRoute('brs_page_pageadmin_edit');
-		$this->addWidget($edit_widget, 'edit_page');
+		
+		$page_widget = new EditFormWidget();
+		$page_widget->setFields($edit_fields);
+		$page_widget->setSuccessRoute('brs_page_pageadmin_edit');
+		$this->addWidget($page_widget, 'edit_page');
+		
+		$content_panel = new ContentPanel();
+		$content_panel->setPageWidget($page_widget);
+		
+		$this->addWidget($content_panel, 'content_panel');
+		
+		$edit_panel = new PanelWidget();
+		$this->addWidget($edit_panel, 'edit_panel');
+		$edit_panel->addListener($page_widget, 'get.id', 'onParentGetById');
+		
+		$edit_panel->setWidgets(array(
+			'page' => &$page_widget,
+			'content' => &$content_panel,
+		));
+		
 		
 		$this->addView('index', $list_widget);
-		$this->addView('new', $edit_widget);
-		$this->addView('edit', $edit_widget);
+		$this->addView('new', $page_widget);
+		$this->addView('edit', $edit_panel);
 	}
 	
 }

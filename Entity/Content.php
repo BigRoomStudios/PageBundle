@@ -21,41 +21,41 @@ class Content extends SuperEntity
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private $id;
+    public $id;
 
     /**
      * @var string $header
      *
-     * @ORM\Column(name="header", type="string", length=255)
+     * @ORM\Column(name="header", type="string", length=255, nullable=true)
      */
-    private $header;
+    public $header;
 
     /**
      * @var string $sub_header
      *
-     * @ORM\Column(name="sub_header", type="string", length=255)
+     * @ORM\Column(name="sub_header", type="string", length=255, nullable=true)
      */
-    private $sub_header;
+    public $sub_header;
 
     /**
      * @var text $body
      *
-     * @ORM\Column(name="body", type="text")
+     * @ORM\Column(name="body", type="text", nullable=true)
      */
-    private $body;
+    public $body;
 
     /**
      * @var integer $page_id
      *
      * @ORM\Column(name="page_id", type="integer")
      */
-    private $page_id;
+    public $page_id;
 
 	/**
      * @ORM\ManyToOne(targetEntity="Page", inversedBy="content")
      * @ORM\JoinColumn(name="page_id", referencedColumnName="id")
      */
-    protected $page;
+    public $page;
 	
 	
     /**
@@ -151,9 +151,9 @@ class Content extends SuperEntity
     /**
      * Set page
      *
-     * @param BRS\CoreBundle\Entity\Page $page
+     * @param BRS\PageBundle\Entity\Page $page
      */
-    public function setPage(\BRS\CoreBundle\Entity\Page $page)
+    public function setPage(\BRS\PageBundle\Entity\Page $page)
     {
         $this->page = $page;
     }
@@ -161,10 +161,23 @@ class Content extends SuperEntity
     /**
      * Get page
      *
-     * @return BRS\CoreBundle\Entity\Page 
+     * @return BRS\PageBundle\Entity\Page 
      */
     public function getPage()
     {
         return $this->page;
     }
+	
+	public function setValue($key, $value){
+		
+		parent::setValue($key, $value);
+		
+		if($key == 'page_id'){
+			
+			$page = $this->em->getReference('\BRS\PageBundle\Entity\Page', $value);
+			
+			$this->setPage($page);
+		}
+	}
+	
 }

@@ -184,9 +184,9 @@ class Page extends SuperEntity
     /**
      * Add content
      *
-     * @param BRS\CoreBundle\Entity\Content $content
+     * @param BRS\PageBundle\Entity\Content $content
      */
-    public function addContent(\BRS\CoreBundle\Entity\Content $content)
+    public function addContent(\BRS\PageBundle\Entity\Content $content)
     {
         $this->content[] = $content;
     }

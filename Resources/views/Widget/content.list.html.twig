@@ -1,0 +1,18 @@
+{% if page.content is defined %}
+	<ul class="sortable">
+	{% for content in page.content %}
+
+		<li data-id="{{ content.id }}">
+			<div class="content">
+				<h2>{{ content.header }}</h2>
+				<span class="body">{{ content.body | raw }}</span>
+				<div class="actions">
+					<a class="button edit-button">{{ 'Edit' | trans }}</a>
+					<a class="button delete-button">{{ 'Delete' | trans }}</a>
+				</div>
+			</div>			
+		</li>
+	
+	{% endfor %}
+	</ul>
+{% endif %}

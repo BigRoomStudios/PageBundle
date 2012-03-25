@@ -1,0 +1,44 @@
+{% extends 'BRSCoreBundle:Widget:panel.html.twig' %}
+{% block widget %}
+	
+	<div class="content-list-actions widget">
+		<div class="actions wrapper">
+			<a id="add-content-button" class="button add-button">{{ 'Add Content' | trans }}</a>
+		</div>
+	</div>
+	
+	{% for widget in widgets %}
+	
+		{{ widget | raw }}
+	
+	{% endfor %}
+	
+	<div class="content-list-widget widget{% if page.content.count == 0 %} hidden{% endif %}">
+		
+		<div class="widget-header">
+			<h2>{{ 'page_content' | trans }}:</h2>
+		</div>
+		
+		<div class="widget-body content-list">
+			
+			{% include 'BRSPageBundle:Widget:content.list.html.twig' %}
+			
+		</div>
+	</div>
+	
+{% endblock %}
+{% block widget_js %}
+	
+	<script type="text/javascript">
+		
+		var content_panel = new ContentPanel({
+			id:'{{route}}_{{name}}',
+			name:'{{ name }}', 
+			route:'{{ route }}',
+			action:'{{ path(route, { 'name':name, 'route':'' }) }}',
+			page_id:'{{ page.id }}'
+		});
+		
+	</script>
+	
+{% endblock %}
