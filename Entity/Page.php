@@ -11,7 +11,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * BRS\CoreBundle\Entity\Page
  *
  * @ORM\Table()
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="BRS\PageBundle\Repository\PageRepository")
  */
 class Page extends SuperEntity
 {

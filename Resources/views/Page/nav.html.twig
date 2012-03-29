@@ -1,0 +1,11 @@
+<div id="{% block id %}nav{% endblock %}" class="{% block class %}nav wrapper{% endblock %}">
+	<ul>
+		{% for page in nav %}
+		
+			<li{% if(page.selected) %} class="selected"{% endif %}>
+				<a href="{% if page.route == 'home' %}{{ path('brs_page_page_index') }}{% else %}{{ path('brs_page_page_page', {route:page.route}) }}{% endif %}">{{ page.title }}</a>{% if(page.selected) %}<span class="selected-indicator"></span>{% endif %}
+			</li>
+			
+		{% endfor %}
+	</ul>
+</div>

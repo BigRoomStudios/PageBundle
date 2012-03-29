@@ -3,6 +3,7 @@
 namespace BRS\PageBundle\Controller;
 
 use BRS\CoreBundle\Core\WidgetController;
+use BRS\CoreBundle\Core\Utility as BRS;
 
 use Symfony\Component\HttpFoundation\Response;
 
@@ -24,7 +25,9 @@ class PageController extends WidgetController
 	 * @Template("BRSPageBundle:Page:default.html.twig")
 	 */
 	public function indexAction()
-	{		
+	{
+		$nav = $this->getNav('home');
+					
 		$page = $this->lookupPage('home');
 		
 		if(!is_object($page)){
@@ -34,6 +37,7 @@ class PageController extends WidgetController
 			
 		$vars = array(
 			'page' => $page,
+			'nav' => $nav,
 		);
 			
 		return $vars;
@@ -48,6 +52,8 @@ class PageController extends WidgetController
 	 */
 	public function pageAction($route)
 	{
+		$nav = $this->getNav($route);
+		
 		$page = $this->lookupPage($route);
 		
 		if(!is_object($page)){
@@ -58,6 +64,7 @@ class PageController extends WidgetController
 		$vars = array(
 			'route' => $route,
 			'page' => $page,
+			'nav' => $nav,
 		);
 			
 		return $vars;
@@ -69,4 +76,13 @@ class PageController extends WidgetController
 		
 		return $page;
 	}
+	
+	protected function getNav($route){
+		
+		$pages = $this->getRepository('BRSPageBundle:Page')->getNav($route);
+		
+		return $pages;
+		
+	}
+	
 }
