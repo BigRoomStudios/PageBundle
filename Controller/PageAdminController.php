@@ -67,6 +67,10 @@ class PageAdminController extends AdminController
 					'class' => 'valid-route'
 				)
 			),
+			
+			'template' => array(
+				'type' => 'text',
+			),
 		);
 		
 		$page_widget = new EditFormWidget();

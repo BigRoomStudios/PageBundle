@@ -1,10 +1,10 @@
 <div class="content-blocks">
 	
-	{% for content in page.content %}
+	{% for content_block in content %}
 		
 		<div class="content-block">
 			
-			{% include 'BRSPageBundle:Block:default.html.twig' %}
+			{{ content_block | raw }}
 			
 		</div>
 		

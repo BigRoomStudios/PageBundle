@@ -46,6 +46,20 @@ class Page extends SuperEntity
     public $route;
 
     /**
+     * @var string $template
+     *
+     * @ORM\Column(name="template", type="string", length=255, nullable=true)
+     */
+    public $template;
+	
+    /**
+     * @var integer $display_order
+     *
+     * @ORM\Column(name="display_order", type="integer", nullable=true)
+     */
+    public $display_order;
+	
+    /**
      * @var string $date_added
      *
      * @ORM\Column(name="date_added", type="date", nullable=true)
@@ -129,6 +143,46 @@ class Page extends SuperEntity
     public function setRoute($route)
     {
         $this->route = $route;
+    }
+
+    /**
+     * Get template
+     *
+     * @return string 
+     */
+    public function getTemplate()
+    {
+        return $this->template;
+    }
+
+    /**
+     * Set template
+     *
+     * @param string $template
+     */
+    public function setTemplate($template)
+    {
+        $this->template = $template;
+    }
+
+    /**
+     * Get order
+     *
+     * @return int 
+     */
+    public function getDisplayOrder()
+    {
+        return $this->display_order;
+    }
+
+    /**
+     * Set order
+     *
+     * @param int $display_order
+     */
+    public function setDisplayOrder($display_order)
+    {
+        $this->display_order = $display_order;
     }
 
     /**

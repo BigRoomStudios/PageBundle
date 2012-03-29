@@ -116,9 +116,11 @@ var ContentPanel = Class.create({
 		
 		var head = $li.find('h2').html();
 		var body = $li.find('span.body').html();
+		var template = $li.find('span.template').html();
 		
 		this.content_form.find('#form_header').attr('value', head);
 		this.content_form.find('#form_body').attr('value', body);
+		this.content_form.find('#form_template').attr('value', template);
 	},
 	
 	deleteContent: function(item){

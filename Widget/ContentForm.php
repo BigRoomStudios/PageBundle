@@ -62,6 +62,14 @@ class ContentForm extends EditFormWidget
 					'placeholder' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
 				),
 			),
+			
+			'template' => array(
+				'type' => 'text',
+				'attr' => array(
+					'class' => 'extra-large',
+					'placeholder' => 'Template e.g. BundleName:file.html.twig',
+				),
+			),
 		);
 		
 		$this->setFields($edit_fields);

@@ -43,6 +43,36 @@ class PageController extends WidgetController
 		return $vars;
 	}
 	
+	/**
+	 * render inner page content for a given dynamic route
+	 *
+	 * @Route("/render/{route}", requirements={"route" = ".*"})
+	 * 
+	 */
+	public function renderAction($route)
+	{
+		$page = $this->lookupPage($route);
+		
+		if(!is_object($page)){
+			
+			throw $this->createNotFoundException('This is not the page you\'re looking for...');
+		}
+		
+		$rendered = $this->renderPage($page);
+		
+		if($this->isAjax()){
+			
+			$values = array(
+				'rendered' => $rendered,
+			);
+		
+			return $this->jsonResponse($values);
+				
+		}else{
+			
+			return new Response($rendered);
+		}
+	}
 	
 	/**
 	 * display page content for a given dynamic route
@@ -60,14 +90,54 @@ class PageController extends WidgetController
 			
 			throw $this->createNotFoundException('This is not the page you\'re looking for...');
 		}
-				
+		
+		$rendered = $this->renderPage($page);
+			
 		$vars = array(
 			'route' => $route,
 			'page' => $page,
+			'rendered' => $rendered,
 			'nav' => $nav,
 		);
 			
 		return $vars;
+	}
+	
+	protected function renderPage($page){
+		
+		$content = $page->getContent();
+		
+		$rendered_content = array();
+		
+		foreach($content as $content_block){
+			
+			$rendered_content[] = $this->renderContent($content_block);
+		}
+		
+		$vars = array(
+			'page' => $page,
+			'content' => $rendered_content,
+		);
+		
+		$template = ($page->template) ? $page->template : 'BRSPageBundle:Page:content.html.twig';
+		
+		$rendered = $this->container->get('templating')->render($template, $vars);
+		
+		return $rendered;	
+	}
+	
+	protected function renderContent($content){
+		
+		$vars = array(
+		
+			'content' => $content,
+		);
+		
+		$template = ($content->template) ? $content->template : 'BRSPageBundle:Block:default.html.twig';
+		
+		$rendered = $this->container->get('templating')->render($template, $vars);
+		
+		return $rendered;		
 	}
 	
 	protected function lookupPage($route)
@@ -82,7 +152,6 @@ class PageController extends WidgetController
 		$pages = $this->getRepository('BRSPageBundle:Page')->getNav($route);
 		
 		return $pages;
-		
 	}
 	
 }
