@@ -1,0 +1,23 @@
+<div id="slide-back"><a href="#">&lt;&lt;</a></div>
+				
+<div id="slide-next"><a href="#">&gt;&gt;</a></div>
+				
+<div id="container" class="slideshow">
+	
+	{% include 'BRSPageBundle:Page:content.html.twig'%}
+	
+</div>
+
+<script language="JavaScript">
+	
+	$j.widgets['swiper'] = new Swipe($('#container.slideshow').get(0),{
+		startSlide: 0,
+		speed: 500,
+		auto: 8000,
+		margin: 20,
+		callback: function(event, index, elem) {}
+		});
+	
+	$j.widgets['swiper'].stop();
+	
+</script>

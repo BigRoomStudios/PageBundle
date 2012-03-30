@@ -17,32 +17,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
  */
 class PageController extends WidgetController
 {
-
-	/**
-	 * Displays a form to create a new entity for this admin module
-	 *
-	 * @Route("/")
-	 * @Template("BRSPageBundle:Page:default.html.twig")
-	 */
-	public function indexAction()
-	{
-		$nav = $this->getNav('home');
-					
-		$page = $this->lookupPage('home');
-		
-		if(!is_object($page)){
-			
-			return $this->render('BRSFrontBundle:Default:index.html.twig', array('title' => 'Hello World!'));
-		}
-			
-		$vars = array(
-			'page' => $page,
-			'nav' => $nav,
-		);
-			
-		return $vars;
-	}
-	
 	/**
 	 * render inner page content for a given dynamic route
 	 *
@@ -75,6 +49,69 @@ class PageController extends WidgetController
 	}
 	
 	/**
+	 * render content block for a given id
+	 *
+	 * @Route("/content/{id}")
+	 * 
+	 */
+	public function contentAction($id)
+	{
+		$content = $this->getRepository('BRSPageBundle:Content')->findOneById($id);
+		
+		$rendered = $this->renderContent($content);
+		
+		if($this->isAjax()){
+			
+			$values = array(
+				'rendered' => $rendered,
+			);
+		
+			return $this->jsonResponse($values);
+				
+		}else{
+			
+			return new Response($rendered);
+		}
+	}
+	
+	/**
+	 * Displays the home page
+	 *
+	 * @Route("/")
+	 * @Template("BRSPageBundle:Page:default.html.twig")
+	 */
+	public function indexAction()
+	{
+		$nav = $this->getNav('home');
+					
+		$page = $this->lookupPage('home');
+		
+		if(!is_object($page)){
+			
+			return $this->render('BRSFrontBundle:Default:index.html.twig', array('title' => 'Hello World!'));
+		}
+			
+		$rendered = $this->renderPage($page);
+		
+		if($this->isAjax()){
+			
+			$values = array(
+				'rendered' => $rendered,
+			);
+		
+			return $this->jsonResponse($values);		
+		}
+		
+		$vars = array(
+			'page' => $page,
+			'rendered' => $rendered,
+			'nav' => $nav,
+		);
+			
+		return $vars;
+	}
+	
+	/**
 	 * display page content for a given dynamic route
 	 *
 	 * @Route("/{route}", requirements={"route" = ".*"})
@@ -92,7 +129,16 @@ class PageController extends WidgetController
 		}
 		
 		$rendered = $this->renderPage($page);
+		
+		if($this->isAjax()){
 			
+			$values = array(
+				'rendered' => $rendered,
+			);
+		
+			return $this->jsonResponse($values);		
+		}
+		
 		$vars = array(
 			'route' => $route,
 			'page' => $page,
@@ -102,6 +148,8 @@ class PageController extends WidgetController
 			
 		return $vars;
 	}
+	
+	
 	
 	protected function renderPage($page){
 		
@@ -119,7 +167,7 @@ class PageController extends WidgetController
 			'content' => $rendered_content,
 		);
 		
-		$template = ($page->template) ? $page->template : 'BRSPageBundle:Page:content.html.twig';
+		$template = ($page->template) ? $page->template : 'BRSPageBundle:Page:standard.html.twig';
 		
 		$rendered = $this->container->get('templating')->render($template, $vars);
 		
