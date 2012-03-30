@@ -38,14 +38,19 @@ $('#slide-indicators a').live('click', function(event){
 	
 	$j.widgets['swiper'].goTo(key-1);
 	
-	updateSlideIndicators();
+	//updateSlideIndicators();
 	
 	//updateSlideHash();
 });
 
 function updateSlideIndicators(){
 	
-	var index = $j.widgets['swiper'].index;
+	var index = 0;
+	
+	if($j.widgets['swiper']){
+	
+		index = $j.widgets['swiper'].index;
+	}
 	
 	var $indicators = $('#slide-indicators a');
 	
@@ -57,9 +62,7 @@ function updateSlideIndicators(){
 
 function updateSlideHash(){
 	
-	var index = $j.widgets['swiper'].index;
-	
-	
+	//var index = $j.widgets['swiper'].index;
 	
 	//alert(index);
 	
