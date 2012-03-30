@@ -37,14 +37,22 @@ var PageNav = Class.create({
 			});
 			
 			window.onpopstate = function(event) {  
-					
-				var nav_id = 'nav_' + event.state.page_id;
 				
-				if($(nav_id)){
+				/*if(event.state.slide){
 					
-					$this.set_selected(nav_id);
+					$j.widgets['swiper'].goTo(event.state.slide);
+				}*/
+				
+				if(event.state && event.state.page_id){
+				
+					var nav_id = 'nav_' + event.state.page_id;
 					
-					$this.show_view(document.location);
+					if($(nav_id)){
+						
+						$this.set_selected(nav_id);
+						
+						$this.show_view(document.location);
+					}	
 				}
 			}; 
 		}
@@ -102,6 +110,13 @@ $(document).ready(function() {
 		view_container:'#page'
 	});
 	
+	var page_id = $('#container').data('page-id');
 	
+	if($j.page_nav.supports_history){
+		
+		//alert(window.location.href);
+		
+		history.replaceState({page_id: page_id}, "", window.location.href);	
+	}
 	
 });

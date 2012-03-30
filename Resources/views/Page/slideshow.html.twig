@@ -2,11 +2,22 @@
 				
 <div id="slide-next"><a href="#">&gt;&gt;</a></div>
 				
-<div id="container" class="slideshow">
+<div id="container" class="slideshow" data-page-id="{{ page.id }}">
 	
 	{% include 'BRSPageBundle:Page:content.html.twig'%}
 	
+	<div id="slide-indicators">
+	
+		{% for key, content_block in content %}
+			
+			<a href="#{{ key+1 }}">{{ key+1 }}</a>
+			
+		{% endfor %}
+		
+	</div>
 </div>
+
+
 
 <script language="JavaScript">
 	
@@ -15,9 +26,33 @@
 		speed: 500,
 		auto: 8000,
 		margin: 20,
-		callback: function(event, index, elem) {}
-		});
+		callback: function(event, index, elem) {
+			
+			updateSlideIndicators();
+			
+			//window.location.hash = (index+1);
+		}
+	});
 	
 	$j.widgets['swiper'].stop();
+	
+	$(function(){
+		
+		updateSlideIndicators();
+		
+		if(!window.location.hash){
+			
+			
+			
+		}else{
+			
+			//var index = window.location.hash.slice(1);
+			
+			//$j.widgets['swiper'].goTo(index-1);
+		}
+		
+	})
+	
+
 	
 </script>

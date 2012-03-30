@@ -181,7 +181,7 @@ class PageController extends WidgetController
 			'content' => $content,
 		);
 		
-		$template = ($content->template) ? $content->template : 'BRSPageBundle:Block:default.html.twig';
+		$template = ($content->template) ? $content->template : 'BRSPageBundle:Content:default.html.twig';
 		
 		$rendered = $this->container->get('templating')->render($template, $vars);
 		

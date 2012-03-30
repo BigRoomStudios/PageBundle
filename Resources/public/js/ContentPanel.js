@@ -70,6 +70,11 @@ var ContentPanel = Class.create({
 		this.content_form_widget.entity_id = undefined;
 		
 		this.content_form.find('.widget-header h2').html('Add Content:');
+		
+		this.content_form.find('input[type=text]').attr('value', '');
+		
+		this.content_form.find('textarea').attr('value', '');
+		
 	},
 	
 	cancelAdd: function(event){
@@ -88,10 +93,6 @@ var ContentPanel = Class.create({
 		this.content_form.addClass('hidden');
 		
 		this.content_actions.show();
-		
-		this.content_form.find('input[type=text]').attr('value', '');
-		
-		this.content_form.find('textarea').attr('value', '');
 		
 		this.refreshData();
 	},
