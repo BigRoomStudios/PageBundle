@@ -138,4 +138,33 @@ class ContentPanel extends PanelWidget
 		return $this->jsonResponse($vars);
 	}
 	
+	/**
+	 * get a set of rendered rows
+	 *
+	 * @Route("/reorder")
+	 */
+	public function reorderAction()
+	{	
+		$request = $this->getRequest();	
+		
+		if ($request->getMethod() == 'POST') {
+			
+			//$page_id = $request->get('page_id');
+			
+			$content = $request->get('content');
+			
+			$count = $this->getRepository('BRSPageBundle:Content')->reorder($content);
+			
+			$success = true;
+			
+			$vars = array(
+				//'page_id' => $page_id,
+				'success' => $success,
+				'count' => $count,
+			);
+				
+			return $this->jsonResponse($vars);
+		}
+	}
+	
 }

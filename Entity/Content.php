@@ -7,10 +7,10 @@ use BRS\CoreBundle\Core\SuperEntity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * BRS\CoreBundle\Entity\Content
+ * BRS\PageBundle\Entity\Content
  *
  * @ORM\Table()
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="BRS\PageBundle\Repository\ContentRepository")
  */
 class Content extends SuperEntity
 {
@@ -233,5 +233,4 @@ class Content extends SuperEntity
 			$this->setPage($page);
 		}
 	}
-	
 }

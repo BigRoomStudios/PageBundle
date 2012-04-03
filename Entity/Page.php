@@ -3,6 +3,7 @@
 namespace BRS\PageBundle\Entity;
 
 use BRS\CoreBundle\Core\SuperEntity;
+use BRS\CoreBundle\Core\Utility;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -75,6 +76,7 @@ class Page extends SuperEntity
 	
 	/**
      * @ORM\OneToMany(targetEntity="Content", mappedBy="page")
+	 * @ORM\OrderBy({"display_order" = "ASC"})
      */
     public $content;
 
@@ -254,4 +256,6 @@ class Page extends SuperEntity
     {
         return $this->content;
     }
+	
+	
 }

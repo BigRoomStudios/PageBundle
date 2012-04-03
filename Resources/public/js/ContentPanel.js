@@ -29,9 +29,6 @@ var ContentPanel = Class.create({
 		this.content_form_widget = $j.widgets[form_widget_id];
 		this.content_actions = this.container.find('.content-list-actions');
 		
-		var $list = this.container.find('ul.sortable');
-		$list.sortable({ axis: 'y' });
-		
 		
 		this.add_btn.click(function(event){
 			
@@ -59,6 +56,42 @@ var ContentPanel = Class.create({
 			$this.deleteContent(this);
 		});
 		
+		this.list = this.container.find('ul.sortable');
+		
+		this.list.sortable({ 
+			axis: 'y',
+			update: function(event, ui){
+				
+				$this.onSort(event, ui);
+			}
+		});
+		
+	},
+	
+	onSort: function(event, ui){
+		
+		var content = this.list.sortable('serialize');
+		
+		var data = {
+			page_id: this.page_id,
+			content: content
+		};
+		
+		var action = this.action + '/reorder';
+		
+		$.ajax({
+			type: 'POST',
+			url: action,
+			dataType: 'json',
+			data: content,
+			success: function(result){
+				
+				$j.msg({
+				    type:'success',
+				    content:"<p>Your changes have been saved.</p>" // should come from server
+				});
+			}
+		});
 	},
 	
 	addContent: function(event){
@@ -180,8 +213,15 @@ var ContentPanel = Class.create({
 					
 					$content_list.html(data.rendered);
 					
-					var $list = $this.container.find('ul.sortable');
-					$list.sortable({ axis: 'y' });
+					$this.list = this.container.find('ul.sortable');
+		
+					$this.list.sortable({ 
+						axis: 'y',
+						update: function(event, ui){
+							
+							$this.onSort(event, ui);
+						}
+					});
 				}
 			}  
 		);
