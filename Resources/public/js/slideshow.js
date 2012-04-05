@@ -30,8 +30,6 @@ function slideNext(event){
 	
 	if($target.hasClass('disabled')){
 		
-		alert('here');
-		
 		return false;
 	}
 	
@@ -56,8 +54,6 @@ function slideBack(event){
 	var $target = $(event.target);
 	
 	if($target.hasClass('disabled')){
-		
-		alert('here');
 		
 		return false;
 	}
