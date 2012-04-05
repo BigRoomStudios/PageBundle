@@ -11,7 +11,30 @@ $('#slide-next').live('click', function(event){
 	
 });
 
+$('#slide-next').live('touchstart', function(event){
+	
+	event.preventDefault();
+	
+	$j.widgets['swiper'].next();
+	
+	//updateSlideHash();
+	
+});
+
 $('.slide-next').live('click', function(event){
+	
+	//alert('click');
+	
+	event.preventDefault();
+	
+	$j.widgets['swiper'].next();
+	
+	//updateSlideHash();
+});
+
+$('.slide-next').live('touchstart', function(event){
+	
+	//alert('touchstart');
 	
 	event.preventDefault();
 	
@@ -21,6 +44,15 @@ $('.slide-next').live('click', function(event){
 });
 
 $('#slide-back').live('click', function(event){
+	
+	event.preventDefault();
+	
+	$j.widgets['swiper'].prev();
+	
+	//updateSlideHash();
+});
+
+$('#slide-back').live('touchstart', function(event){
 	
 	event.preventDefault();
 	
