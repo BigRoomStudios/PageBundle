@@ -95,7 +95,14 @@ class PageController extends WidgetController
 		
 		if($this->isAjax()){
 			
+			$page_values = array(
+				'title' => $page->title,
+				'route' => $page->route,
+				'id' => $page->id,
+			);
+			
 			$values = array(
+				'page' => $page_values,
 				'rendered' => $rendered,
 			);
 		
@@ -132,7 +139,14 @@ class PageController extends WidgetController
 		
 		if($this->isAjax()){
 			
+			$page_values = array(
+				'title' => $page->title,
+				'route' => $page->route,
+				'id' => $page->id,
+			);
+			
 			$values = array(
+				'page' => $page_values,
 				'rendered' => $rendered,
 			);
 		

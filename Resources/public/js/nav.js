@@ -8,7 +8,14 @@ var PageNav = Class.create({
 		
 		this.supports_history = ( window.history && history.pushState ? true : false ); 
 		
+		this.container = $(config.container);
+		
 		this.view_container = $(config.view_container);
+		
+		this.selected_page_id = this.container.find('li.selected a').first().data('page-id');
+		
+	
+		//this.selected = 
 		
 		if(this.supports_history){
 			
@@ -60,13 +67,86 @@ var PageNav = Class.create({
 	
 	go: function(id, href){
 		
-		var nav_id = 'nav_' + id;
+		if(this.supports_history){
 		
-		history.pushState({page_id: id}, "", href);
-						
-		this.set_selected(nav_id);
-						
-		this.show_view(href);
+			var nav_id = 'nav_' + id;
+			
+			history.pushState({page_id: id}, "", href);
+			
+			this.selected_page_id = id;
+							
+			this.set_selected(nav_id);
+							
+			this.show_view(href);
+			
+		}else{
+			
+			window.location = href;
+		}
+	},
+	
+	get_next_page: function(){
+		
+		var nav_id = '#nav_' + this.selected_page_id;
+		
+		var $selected_nav = $(nav_id);
+
+		var $next_nav = $(nav_id).next('li');
+		
+		if($next_nav.length > 0){
+			
+			var $a = $next_nav.find('a').first();
+			
+			var id = $a.data('page-id');
+			
+			var href = $a.attr('href');
+			
+			return {id: id, href: href};
+		}
+		
+		return false;
+	},
+	
+	go_next: function(){
+		
+		var page = this.get_next_page();
+		
+		if(page){
+			
+			this.go(page.id, page.href);	
+		}
+	},
+	
+	get_prev_page: function(){
+		
+		var nav_id = '#nav_' + this.selected_page_id;
+		
+		var $selected_nav = $(nav_id);
+
+		var $prev_nav = $(nav_id).prev('li');
+		
+		if($prev_nav.length > 0){
+		
+			var $a = $prev_nav.find('a').first();
+			
+			var id = $a.data('page-id');
+			
+			var href = $a.attr('href');
+			
+			return {id: id, href: href};
+		}
+		
+		return false;
+	},
+	
+	go_prev: function(){
+		
+		var page = this.get_prev_page();
+		
+		if(page){
+			
+			this.go(page.id, page.href);	
+		}
 	},
 	
 	show_view: function(href) {
@@ -83,6 +163,8 @@ var PageNav = Class.create({
 		    function(json) {
 		    	
 		        var result = json.rendered;
+		        
+		        document.title = json.page.title;
 		        
 		        $this.view_container.html(result);
 		        $this.view_container.removeClass('hide'); 
@@ -106,7 +188,7 @@ var PageNav = Class.create({
 
 $(document).ready(function() {
 	$j.page_nav = new PageNav({
-		container:'nav',
+		container:'#primary-nav',
 		view_container:'#page'
 	});
 	
