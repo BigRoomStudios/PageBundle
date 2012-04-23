@@ -38,8 +38,9 @@ class PageAdminController extends AdminController
 					'params' => array('id'),
 				),
 				'label' => 'edit',
-				'width' => 100,
+				'width' => 55,
 				'nonentity' => true,
+				'class' => 'btn btn-mini',
 			),
 			'title' => array(
 				'type' => 'text',

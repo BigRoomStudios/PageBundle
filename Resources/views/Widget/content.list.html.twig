@@ -7,10 +7,12 @@
 				<h2>{{ content.header }}</h2>
 				<span class="body">{{ content.body | raw }}</span>
 				<span class="template hidden">{{ content.template }}</span>
-				<div class="actions">
-					<a class="button edit-button">{{ 'Edit' | trans }}</a>
-					<a class="button delete-button">{{ 'Delete' | trans }}</a>
-				</div>
+				{% spaceless %}
+					<div class="actions">
+						<a class="btn btn-primary edit-button"><i class="icon-pencil icon-white"></i> {{ 'Edit' | trans }}</a>
+						<a class="btn btn-danger delete-button"><i class="icon-trash icon-white"></i> {{ 'Delete' | trans }}</a>
+					</div>
+				{% endspaceless %}
 			</div>			
 		</li>
 	

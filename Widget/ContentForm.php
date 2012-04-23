@@ -25,11 +25,11 @@ class ContentForm extends EditFormWidget
 		
 		'save' => array(
 			'type' => 'button',
+			'class' => 'btn-primary',
 		),
 		
 		'cancel' => array(
 			'type' => 'button',
-			'class' => 'button-grey',
 		),
 	);
 	

@@ -20,8 +20,8 @@ var ContentPanel = Class.create({
 		this.container = $('#' + this.id);
 		
 		this.add_btn = this.container.find('.add-button');
-		this.cancel_add_btn = this.container.find('.content-form-widget .button-cancel');
-		this.save_add_btn = this.container.find('.content-form-widget .button-save');
+		this.cancel_add_btn = this.container.find('.content-form-widget .btn-cancel');
+		this.save_add_btn = this.container.find('.content-form-widget .btn-save');
 		
 		this.content_list = this.container.find('.content-list-widget').first();
 		this.content_form = this.container.find('.content-form-widget').first();
