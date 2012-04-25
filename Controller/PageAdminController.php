@@ -37,6 +37,7 @@ class PageAdminController extends AdminController
 					'name' => 'brs_page_pageadmin_edit',
 					'params' => array('id'),
 				),
+				'nav' => true,
 				'label' => 'edit',
 				'width' => 55,
 				'nonentity' => true,
