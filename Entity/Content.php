@@ -187,9 +187,9 @@ class Content extends SuperEntity
      *
      * @param integer $pageId
      */
-    public function setPageId($pageId)
+    public function setPageId($page_id)
     {
-        $this->page_id = $pageId;
+        $this->page_id = $page_id;
     }
 
     /**
