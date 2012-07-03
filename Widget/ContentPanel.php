@@ -107,7 +107,7 @@ class ContentPanel extends PanelWidget
 	
 	
 	/**
-	 * get a set of rendered rows
+	 * delete a content item
 	 *
 	 * @Route("/delete")
 	 */
@@ -139,7 +139,7 @@ class ContentPanel extends PanelWidget
 	}
 	
 	/**
-	 * get a set of rendered rows
+	 * reorder content blocks
 	 *
 	 * @Route("/reorder")
 	 */
