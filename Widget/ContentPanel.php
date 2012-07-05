@@ -8,6 +8,7 @@ use BRS\CoreBundle\Core\Utility;
 use BRS\PageBundle\Entity\Content;
 use BRS\PageBundle\Entity\Page;
 use BRS\PageBundle\Widget\ContentForm;
+use BRS\PageBundle\Widget\PageFileList;
 
 /**
  * Content panel lets you add multiple content blocks to a page
@@ -23,6 +24,8 @@ class ContentPanel extends PanelWidget
 	
 	protected $page;
 	
+	protected $file_list;
+	
 	public function setup(){
 			
 		$content_form = new ContentForm();
@@ -30,7 +33,12 @@ class ContentPanel extends PanelWidget
 		
 		$this->content_form = $this->addWidget($content_form, 'add_content');
 		
+		$this->file_list = new PageFileList();
+		
+		$this->addWidget($this->file_list, 'page_files');
+		
 		$this->setWidgets(array(
+			'page_files' =>& $this->file_list,
 			'content_form' =>& $this->content_form,
 		));
 	}
@@ -41,6 +49,7 @@ class ContentPanel extends PanelWidget
 		
 		$page_widget->addListener($this, 'edit.save', 'onPageUpdate');
 		$page_widget->addListener($this, 'get.entity', 'onPageUpdate');
+		$page_widget->addListener($this->file_list, 'get.entity', 'onSearchEvent');
 	}
 	
 	public function onPageUpdate($event){
@@ -49,9 +58,22 @@ class ContentPanel extends PanelWidget
 		
 		$content = new Content();
 		
-		$content->setPageId($this->page->getId());
+		$page_id = $this->page->getId();
+		
+		$content->setPageId($page_id);
 		
 		$this->content_form->setEntity($content);
+		
+		$this->file_list->sessionSet('page_id', $page_id);
+		
+		$this->file_list->setFilters(
+			array(
+				array(
+					'filter' => 'p.page_id = :id',
+					'params' => array('id' => $page_id),
+				)
+			)
+		);
 	}
 	
 	public function getVars($render = true){

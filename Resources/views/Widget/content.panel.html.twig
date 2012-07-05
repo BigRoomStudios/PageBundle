@@ -1,17 +1,17 @@
 {% extends 'BRSCoreBundle:Widget:panel.html.twig' %}
 {% block widget %}
 	
-	<div class="content-list-actions widget">
-		<div class="actions wrapper">
-			<a id="add-content-button" class="btn add-button"><i class="icon-pencil"></i> {{ 'Add Content' | trans }}</a>
-		</div>
-	</div>
-	
 	{% for widget in widgets %}
 	
 		{{ widget | raw }}
 	
 	{% endfor %}
+	
+	<div class="content-list-actions widget">
+		<div class="actions wrapper">
+			<a id="add-content-button" class="btn add-button"><i class="icon-pencil"></i> {{ 'Add Content' | trans }}</a>
+		</div>
+	</div>
 	
 	<div class="content-list-widget widget{% if page.content.count == 0 %} hidden{% endif %}">
 		

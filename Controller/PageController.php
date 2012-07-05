@@ -88,9 +88,9 @@ class PageController extends WidgetController
 		
 		if(!is_object($page)){
 			
-			return $this->render('BRSFrontBundle:Default:index.html.twig', array('title' => 'Hello World!'));
+			return $this->render('BRSFrontBundle:Default:index.html.twig', array('title' => ''));
 		}
-			
+		
 		$rendered = $this->renderPage($page);
 		
 		if($this->isAjax()){

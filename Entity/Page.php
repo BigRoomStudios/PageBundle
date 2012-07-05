@@ -79,11 +79,23 @@ class Page extends SuperEntity
 	 * @ORM\OrderBy({"display_order" = "ASC"})
      */
     public $content;
-
+	
+	/**
+     * @ORM\OneToMany(targetEntity="PageFile", mappedBy="page")
+	 * @ORM\OrderBy({"display_order" = "ASC"})
+     */
+    public $files;
+	
+	
     public function __construct()
     {
         $this->content = new ArrayCollection();
+        $this->files = new ArrayCollection();
     }
+	
+	
+
+    
 	
 	
 	
@@ -257,5 +269,13 @@ class Page extends SuperEntity
         return $this->content;
     }
 	
-	
+	/**
+     * Get files
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getFiles()
+    {
+        return $this->files;
+    }
 }

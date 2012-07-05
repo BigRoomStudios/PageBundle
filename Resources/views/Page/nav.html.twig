@@ -1,4 +1,4 @@
-<div id="{% block id %}nav{% endblock %}" class="{% block class %}nav wrapper{% endblock %}">
+<div id="{{ div_id | default('nav') }}" class="{{ div_class | default('nav wrapper') }}">
 	<ul>
 		{% for page in nav %}
 		
