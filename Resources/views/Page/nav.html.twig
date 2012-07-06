@@ -3,7 +3,7 @@
 		{% for page in nav %}
 		
 			<li{% if(page.selected) %} class="selected"{% endif %} id="nav_{{page.id}}">
-				<a data-route="brs_page_page_page" data-route-params="{route:'{{page.route}}'}" data-page-id="{{page.id}}" href="{% if page.route == 'home' %}{{ path('brs_page_page_index') }}{% else %}{{ path('brs_page_page_page', {route:page.route}) }}{% endif %}">{{ page.title }}</a>{% if(page.selected) %}<span class="selected-indicator"></span>{% endif %}
+				<a data-route="brs_page_pagefront_page" data-route-params="{route:'{{page.route}}'}" data-page-id="{{page.id}}" href="{% if page.route == 'home' %}{{ path('brs_page_pagefront_index') }}{% else %}{{ path('brs_page_pagefront_page', {route:page.route}) }}{% endif %}">{{ page.title }}</a>{% if(page.selected) %}<span class="selected-indicator"></span>{% endif %}
 			</li>
 			
 		{% endfor %}
