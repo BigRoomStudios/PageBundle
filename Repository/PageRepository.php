@@ -9,7 +9,7 @@ class PageRepository extends EntityRepository
 	public function getNav($route)
 	{
 		$pages = $this->getEntityManager()
-			->createQuery('SELECT p FROM BRSPageBundle:Page p ORDER BY p.id ASC')
+			->createQuery('SELECT p FROM BRSPageBundle:Page p ORDER BY p.display_order ASC')
 			->getResult();
 			
 		foreach($pages as $key => $page){

@@ -70,6 +70,10 @@ class PageAdminController extends AdminController
 				)
 			),
 			
+			'display_order' => array(
+				'type' => 'text',
+			),
+			
 			'template' => array(
 				'type' => 'text',
 			),
