@@ -43,6 +43,9 @@ class PageAdminController extends AdminController
 				'nonentity' => true,
 				'class' => 'btn btn-mini',
 			),
+			/*'display_order' => array(
+				'type' => 'text',
+			),*/
 			'title' => array(
 				'type' => 'text',
 			),
@@ -53,6 +56,8 @@ class PageAdminController extends AdminController
 		
 		$list_widget = new ListWidget();
 		$list_widget->setListFields($list_fields);
+		$list_widget->setReorderField('display_order');
+		
 		$this->addWidget($list_widget, 'list_pages');
 	
 		$edit_fields = array(
@@ -68,10 +73,6 @@ class PageAdminController extends AdminController
 				'attr' => array(
 					'class' => 'valid-route'
 				)
-			),
-			
-			'display_order' => array(
-				'type' => 'text',
 			),
 			
 			'template' => array(

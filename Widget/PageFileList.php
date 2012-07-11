@@ -71,6 +71,8 @@ class PageFileList extends FileList
 		);
 		
 		$this->setListFields($list_fields);
+		
+		$this->setReorderField('display_order');
 	}
 	
 	public function uploadAction(){
