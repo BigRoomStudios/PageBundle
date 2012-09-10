@@ -1,3 +1,17 @@
 .content-form-widget .field label{
 	display: none;
 }
+
+#brs_page_pageadmin_widget_page_files_form{
+	width: 45%;
+	float: right;
+}
+
+#brs_page_pageadmin_widget_add_content{
+	clear: both;
+}
+
+.content-list-widget {
+	width: 54%;
+	float: left;
+}

@@ -184,21 +184,3 @@ var PageNav = Class.create({
 		$li.addClass('selected');
 	}
 });
-
-
-$(document).ready(function() {
-	$j.page_nav = new PageNav({
-		container:'#primary-nav',
-		view_container:'#page'
-	});
-	
-	var page_id = $('#container').data('page-id');
-	
-	if($j.page_nav.supports_history){
-		
-		//alert(window.location.href);
-		
-		history.replaceState({page_id: page_id}, "", window.location.href);	
-	}
-	
-});

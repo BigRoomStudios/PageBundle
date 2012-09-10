@@ -46,12 +46,12 @@ var ContentPanel = Class.create({
 			$this.saveContent(event);
 		});
 		
-		$('#' + this.id + ' .content-list .edit-button').live('click',function(event){
+		$('#' + this.id + ' .content-list-widget .edit-button').live('click',function(event){
 			
 			$this.editContent(this);
 		});
 		
-		$('#' + this.id + ' .content-list .delete-button').live('click',function(event){
+		$('#' + this.id + ' .content-list-widget .delete-button').live('click',function(event){
 			
 			$this.deleteContent(this);
 		});
@@ -209,12 +209,16 @@ var ContentPanel = Class.create({
 				
 				if(data.rendered){
 					
-					$content_list = $this.container.find('.content-list');
+					//$content_list = $this.container.find('.content-list');
 					
-					$content_list.html(data.rendered);
+					//$content_list.html(data.rendered);
 					
-					$this.list = this.container.find('ul.sortable');
-		
+					$this.list = $this.container.find('ul.sortable');
+					
+					$this.list.replaceWith(data.rendered);
+					
+					$this.list = $this.container.find('ul.sortable');
+					
 					$this.list.sortable({ 
 						axis: 'y',
 						update: function(event, ui){

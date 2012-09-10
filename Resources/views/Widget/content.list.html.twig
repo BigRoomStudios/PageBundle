@@ -3,16 +3,17 @@
 	{% for content in page.content %}
 
 		<li id="content_{{ content.id }}" data-id="{{ content.id }}">
-			<div class="content">
-				<h2>{{ content.header }}</h2>
-				<span class="body">{{ content.body | raw }}</span>
-				<span class="template hidden">{{ content.template }}</span>
+			<div class="content wrapper">
 				{% spaceless %}
 					<div class="actions">
 						<a class="btn btn-primary edit-button"><i class="icon-pencil icon-white"></i> {{ 'Edit' | trans }}</a>
 						<a class="btn btn-danger delete-button"><i class="icon-trash icon-white"></i> {{ 'Delete' | trans }}</a>
 					</div>
 				{% endspaceless %}
+				<h2>{{ content.header }}</h2>
+				<span class="body">{{ content.body | raw }}</span>
+				<span class="template hidden">{{ content.template }}</span>
+				
 			</div>			
 		</li>
 	

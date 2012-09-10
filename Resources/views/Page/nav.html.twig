@@ -9,3 +9,24 @@
 		{% endfor %}
 	</ul>
 </div>
+
+{% block javascript %}
+<script language="JavaScript">
+	
+	$(document).ready(function() {
+		$j.page_nav = new PageNav({
+			container:'#{{ div_id | default('nav') }}',
+			view_container:'#{{ view_id | default('page') }}'
+		});
+		
+		var page_id = $('#container').data('page-id');
+		
+		if($j.page_nav.supports_history){
+			
+			history.replaceState({page_id: page_id}, "", window.location.href);	
+		}
+		
+	});
+	
+</script>
+{% endblock %}

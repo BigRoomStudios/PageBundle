@@ -38,8 +38,8 @@ class ContentPanel extends PanelWidget
 		$this->addWidget($this->file_list, 'page_files');
 		
 		$this->setWidgets(array(
-			'page_files' =>& $this->file_list,
 			'content_form' =>& $this->content_form,
+			'page_files' =>& $this->file_list,
 		));
 	}
 	

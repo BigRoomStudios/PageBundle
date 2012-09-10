@@ -7,19 +7,17 @@
 	
 	{% endfor %}
 	
-	<div class="content-list-actions widget">
-		<div class="actions wrapper">
-			<a id="add-content-button" class="btn add-button"><i class="icon-pencil"></i> {{ 'Add Content' | trans }}</a>
-		</div>
-	</div>
-	
-	<div class="content-list-widget widget{% if page.content.count == 0 %} hidden{% endif %}">
+	<div class="content-list-widget list-widget widget">
 		
 		<div class="widget-header">
 			<h2>{{ 'page_content' | trans }}:</h2>
 		</div>
 		
-		<div class="widget-body content-list">
+		<div class="widget-body list">
+			
+			<div class="list-actions wrapper">
+				<a id="add-content-button" class="btn btn-small btn-success add-button list-action"><i class="icon-pencil icon-white"></i> {{ 'Add Content' | trans }}</a>
+			</div>
 			
 			{% include 'BRSPageBundle:Widget:content.list.html.twig' %}
 			
@@ -28,7 +26,7 @@
 	
 {% endblock %}
 {% block widget_js %}
-	
+		
 	<script type="text/javascript">
 		
 		var content_panel = new ContentPanel({
