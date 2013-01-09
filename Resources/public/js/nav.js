@@ -19,7 +19,7 @@ var PageNav = Class.create({
 		
 		if(this.supports_history){
 			
-			$('a').live('click', function (event) {
+			var click_function = function (event) {
 				
 				//event.preventDefault();
 				
@@ -41,7 +41,12 @@ var PageNav = Class.create({
 						return false;
 					}
 				}
-			});
+			}
+			
+			
+			$('a').live('click', click_function);
+			$('a').live('touch', click_function);
+			
 			
 			window.onpopstate = function(event) {  
 				
@@ -58,7 +63,7 @@ var PageNav = Class.create({
 						
 						$this.set_selected(nav_id);
 						
-						$this.show_view(document.location);
+						$this.show_view(event.state.page_id, document.location);
 					}	
 				}
 			}; 
@@ -77,7 +82,7 @@ var PageNav = Class.create({
 							
 			this.set_selected(nav_id);
 							
-			this.show_view(href);
+			this.show_view(id, href);
 			
 		}else{
 			
@@ -149,7 +154,7 @@ var PageNav = Class.create({
 		}
 	},
 	
-	show_view: function(href) {
+	show_view: function(id, href) {
 		
 		console.log(href);
 		

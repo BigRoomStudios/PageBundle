@@ -1,12 +1,8 @@
-<div id="slide-back"><a href="#">&lt;&lt;</a></div>
-				
-<div id="slide-next"><a href="#">&gt;&gt;</a></div>
-				
-<div id="container" class="slideshow" data-page-id="{{ page.id }}">
+<div id="slideshow-{{ page.id }}" class="slideshow" data-page-id="{{ page.id }}">
 	
 	{% include 'BRSPageBundle:Page:content.html.twig'%}
 	
-	<div id="slide-indicators">
+	<div class="slide-indicators">
 	
 		{% for key, content_block in content %}
 			
@@ -15,44 +11,21 @@
 		{% endfor %}
 		
 	</div>
+	
+	<div class="slide-back"><a href="#">&lt;&lt;</a></div>
+				
+	<div class="slide-next"><a href="#">&gt;&gt;</a></div>
+
 </div>
-
-
 
 <script language="JavaScript">
 	
-	$j.widgets['swiper'] = new Swipe($('#container.slideshow').get(0),{
+	var slideshow = new SlideWidget({
+		container: '#slideshow-{{ page.id }}',
 		startSlide: 0,
 		speed: 500,
 		auto: 8000,
-		margin: 20,
-		callback: function(event, index, elem) {
-			
-			updateSlideIndicators();
-			
-			//window.location.hash = (index+1);
-		}
+		margin: 20
 	});
-	
-	$j.widgets['swiper'].stop();
-	
-	$(function(){
-		
-		updateSlideIndicators();
-		
-		if(!window.location.hash){
-			
-			
-			
-		}else{
-			
-			//var index = window.location.hash.slice(1);
-			
-			//$j.widgets['swiper'].goTo(index-1);
-		}
-		
-	})
-	
-
 	
 </script>
