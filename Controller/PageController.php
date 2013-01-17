@@ -16,7 +16,47 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
  */
 class PageController extends WidgetController
 {
-
+	
+	protected function getVars($route){
+		
+		$nav = $this->getNav($route);
+		
+		$page = $this->lookupPage($route);
+		
+		if(!is_object($page)){
+			
+			throw $this->createNotFoundException('This is not the page you\'re looking for...');
+		}
+		
+		$rendered = $this->renderPage($page);
+		
+		if($this->isAjax()){
+			
+			$page_values = array(
+				'title' => $page->title,
+				'route' => $page->route,
+				'id' => $page->id,
+			);
+			
+			$values = array(
+				'page' => $page_values,
+				'rendered' => $rendered,
+			);
+		
+			return $values;		
+		}
+		
+		$vars = array(
+			'route' => $route,
+			'page' => $page,
+			'rendered' => $rendered,
+			'nav' => $nav,
+		);
+			
+		return $vars;
+	}
+	
+	
 	protected function renderPage($page){
 		
 		$content = $page->getContent();

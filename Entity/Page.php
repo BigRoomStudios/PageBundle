@@ -7,12 +7,14 @@ use BRS\CoreBundle\Core\Utility;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * BRS\CoreBundle\Entity\Page
  *
  * @ORM\Table()
  * @ORM\Entity(repositoryClass="BRS\PageBundle\Repository\PageRepository")
+ * @ORM\HasLifecycleCallbacks()
  */
 class Page extends SuperEntity
 {
@@ -31,7 +33,7 @@ class Page extends SuperEntity
      * @ORM\Column(name="title", type="string", length=255)
      */
     public $title;
-
+	
     /**
      * @var string $description
      *
@@ -42,6 +44,7 @@ class Page extends SuperEntity
     /**
      * @var string $route
      *
+	 * @Gedmo\Slug(fields={"title"})
      * @ORM\Column(name="route", type="string", length=255, nullable=true)
      */
     public $route;
@@ -61,18 +64,16 @@ class Page extends SuperEntity
     public $display_order;
 	
     /**
-     * @var string $date_added
-     *
-     * @ORM\Column(name="date_added", type="date", nullable=true)
+     * @Gedmo\Timestampable(on="create")
+     * @ORM\Column(name="created", type="datetime")
      */
-    public $date_added;
+    private $created;
 
     /**
-     * @var date $date_modified
-     *
-     * @ORM\Column(name="date_modified", type="date", nullable=true)
+     * @ORM\Column(name="updated", type="datetime")
+     * @Gedmo\Timestampable(on="update")
      */
-    public $date_modified;
+    private $updated;
 	
 	/**
      * @ORM\OneToMany(targetEntity="Content", mappedBy="page")

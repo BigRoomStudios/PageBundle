@@ -21,12 +21,23 @@ var PageNav = Class.create({
 			
 			var click_function = function (event) {
 				
+				event.stopPropagation();
+				
 				//event.preventDefault();
 				
 				//var route = $(this).data('route');
 				//var route_params = $(this).data('route-params');
 				
 				var page_id = $(this).data('page-id');
+				var replace = $(this).data('replace-view');
+				var page_title = $(this).html();
+				
+				var data_title = $(this).data('title');
+				
+				if(data_title){
+					
+					page_title = data_title;
+				}
 				
 				if(page_id){
 					
@@ -36,17 +47,40 @@ var PageNav = Class.create({
 				
 						event.preventDefault();			
 						
-						$this.go(page_id, this.href);
+						$this.go(page_id, this.href, {replace: replace, title:page_title});
 						
 						return false;
 					}
 				}
+				
+				if( Modernizr.touch ){
+					
+					event.preventDefault();
+					
+					//alert($(this).href());
+					
+					return false;
+				}
+				
+				return false;
+				
 			}
 			
 			
-			$('a').live('click', click_function);
-			$('a').live('touch', click_function);
+			if( Modernizr.touch ){
+				
+				$('a').live('touchstart', click_function);
+				
+				$('a').live('click', click_function);
+				
+				
 			
+				//$('a').tappable(click_function);
+			
+			}else{
+				
+				$('a').live('click', click_function);
+			}
 			
 			window.onpopstate = function(event) {  
 				
@@ -63,26 +97,42 @@ var PageNav = Class.create({
 						
 						$this.set_selected(nav_id);
 						
-						$this.show_view(event.state.page_id, document.location);
+						if(event.state.title){
+				
+							window.document.title = event.state.title;
+						}
+						
+						$this.show_view(event.state.page_id, document.location, event.state.replace);
 					}	
 				}
 			}; 
 		}
 	},
 	
-	go: function(id, href){
+	go: function(id, href, vars){
 		
 		if(this.supports_history){
 		
 			var nav_id = 'nav_' + id;
 			
-			history.pushState({page_id: id}, "", href);
+			if(!vars){
+				vars = {}
+			}
+			
+			vars.page_id = id;
+			
+			history.pushState(vars, "", href);
+			
+			if(vars.title){
+				
+				window.document.title = vars.title;
+			}
 			
 			this.selected_page_id = id;
 							
 			this.set_selected(nav_id);
 							
-			this.show_view(id, href);
+			this.show_view(id, href, vars.replace);
 			
 		}else{
 			
@@ -154,7 +204,7 @@ var PageNav = Class.create({
 		}
 	},
 	
-	show_view: function(id, href) {
+	show_view: function(id, href, replace) {
 		
 		console.log(href);
 		

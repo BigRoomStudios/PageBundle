@@ -49,9 +49,6 @@ class PageAdminController extends AdminController
 			'title' => array(
 				'type' => 'text',
 			),
-			'route' => array(
-				'type' => 'text',
-			),
 		);
 		
 		$list_widget = new ListWidget();
@@ -65,14 +62,6 @@ class PageAdminController extends AdminController
 			'title' => array(
 				'type' => 'text',
 				'required' => true,
-			),
-			
-			'route' => array(
-				'type' => 'text',
-				'required' => true,
-				'attr' => array(
-					'class' => 'valid-route'
-				)
 			),
 			
 			'template' => array(

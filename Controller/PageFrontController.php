@@ -82,7 +82,17 @@ class PageFrontController extends PageController
 	 */
 	public function indexAction()
 	{
-		$nav = $this->getNav('home');
+		
+		$vars = $this->getVars('home');
+			
+		if($this->isAjax()){
+			
+			return $this->jsonResponse($vars);		
+		}
+			
+		return $vars;
+		
+		/*$nav = $this->getNav('home');
 					
 		$page = $this->lookupPage('home');
 		
@@ -115,7 +125,7 @@ class PageFrontController extends PageController
 			'nav' => $nav,
 		);
 			
-		return $vars;
+		return $vars;*/
 	}
 	
 	/**
@@ -126,39 +136,12 @@ class PageFrontController extends PageController
 	 */
 	public function pageAction($route)
 	{
-		$nav = $this->getNav($route);
-		
-		$page = $this->lookupPage($route);
-		
-		if(!is_object($page)){
+		$vars = $this->getVars($route);
 			
-			throw $this->createNotFoundException('This is not the page you\'re looking for...');
-		}
-		
-		$rendered = $this->renderPage($page);
-		
 		if($this->isAjax()){
 			
-			$page_values = array(
-				'title' => $page->title,
-				'route' => $page->route,
-				'id' => $page->id,
-			);
-			
-			$values = array(
-				'page' => $page_values,
-				'rendered' => $rendered,
-			);
-		
-			return $this->jsonResponse($values);		
+			return $this->jsonResponse($vars);		
 		}
-		
-		$vars = array(
-			'route' => $route,
-			'page' => $page,
-			'rendered' => $rendered,
-			'nav' => $nav,
-		);
 			
 		return $vars;
 	}
