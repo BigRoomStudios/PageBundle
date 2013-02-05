@@ -1,0 +1,13 @@
+<ul class="slides cf">
+
+	{% for content_block in content %}
+
+		<li class="slide">
+
+			{{ content_block | raw }}
+
+		</li>
+
+	{% endfor %}
+
+</ul>

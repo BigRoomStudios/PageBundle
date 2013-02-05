@@ -1,32 +1,32 @@
-<div id="{{ div_id | default('nav') }}" class="{{ div_class | default('nav wrapper') }}">
+<nav {#id="{{ div_id | default('nav') }}"#} class="{{ div_class | default('menu') }}">
 	<ul>
 		{% for page in nav %}
-		
-			<li{% if(page.selected) %} class="selected"{% endif %} id="nav_{{page.id}}">
-				<a data-title="{{ page.title }} {{ site_name }}" data-route="brs_page_pagefront_page" data-route-params="{route:'{{page.route}}'}" data-page-id="{{page.id}}" href="{% if page.route == 'home' %}{{ path('brs_page_pagefront_index') }}{% else %}{{ path('brs_page_pagefront_page', {route:page.route}) }}{% endif %}">{{ page.title }}</a>{% if(page.selected) %}<span class="selected-indicator"></span>{% endif %}
+
+			<li{% if(page.selected) %} class="current"{% endif %} id="nav__item__{{page.id}}">
+				<a href="{% if page.route == 'home' %}{{ path('brs_page_pagefront_index') }}{% else %}{{ path('brs_page_pagefront_page', {route:page.route}) }}{% endif %}" data-title="{{ page.title }} {{ site_name }}" data-route="brs_page_pagefront_page" data-route-params="{route:'{{page.route}}'}" data-page-id="{{page.id}}">{{ page.title }}</a>{#{% if(page.selected) %}<span class="current_indicator"></span>{% endif %}#}
 			</li>
-			
+
 		{% endfor %}
 	</ul>
-</div>
+</nav>
 
-{% block javascript %}
+{#{% block javascript %}
 <script language="JavaScript">
-	
+
 	$(document).ready(function() {
 		$j.page_nav = new PageNav({
 			container:'#{{ div_id | default('nav') }}',
 			view_container:'#{{ view_id | default('page') }}'
 		});
-		
+
 		var page_id = $('#container').data('page-id');
-		
+
 		if($j.page_nav.supports_history){
-			
-			history.replaceState({page_id: page_id}, "", window.location.href);	
+
+			history.replaceState({page_id: page_id}, "", window.location.href);
 		}
-		
+
 	});
-	
+
 </script>
-{% endblock %}
+{% endblock %}#}

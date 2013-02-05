@@ -14,7 +14,14 @@ var PageNav = Class.create({
 		
 		this.selected_page_id = this.container.find('li.selected a').first().data('page-id');
 		
-	
+		if(config.nav_id_stub){
+			
+			this.nav_id_stub = config.nav_id_stub;
+			
+		}else{
+			
+			this.nav_id_stub = 'nav_';
+		}
 		//this.selected = 
 		
 		if(this.supports_history){
@@ -41,7 +48,7 @@ var PageNav = Class.create({
 				
 				if(page_id){
 					
-					var nav_id = "nav_" + page_id;
+					var nav_id = this.nav_id_stub + page_id;
 					
 					if($(nav_id)){
 				
@@ -91,7 +98,7 @@ var PageNav = Class.create({
 				
 				if(event.state && event.state.page_id){
 				
-					var nav_id = 'nav_' + event.state.page_id;
+					var nav_id = this.nav_id_stub + event.state.page_id;
 					
 					if($(nav_id)){
 						
@@ -113,7 +120,7 @@ var PageNav = Class.create({
 		
 		if(this.supports_history){
 		
-			var nav_id = 'nav_' + id;
+			var nav_id = this.nav_id_stub + id;
 			
 			if(!vars){
 				vars = {}
@@ -142,7 +149,7 @@ var PageNav = Class.create({
 	
 	get_next_page: function(){
 		
-		var nav_id = '#nav_' + this.selected_page_id;
+		var nav_id = '#' + this.nav_id_stub + this.selected_page_id;
 		
 		var $selected_nav = $(nav_id);
 
@@ -174,7 +181,7 @@ var PageNav = Class.create({
 	
 	get_prev_page: function(){
 		
-		var nav_id = '#nav_' + this.selected_page_id;
+		var nav_id = '#' + this.nav_id_stub + this.selected_page_id;
 		
 		var $selected_nav = $(nav_id);
 
@@ -234,8 +241,8 @@ var PageNav = Class.create({
 		
 		$ul = $li.closest('ul');
 		
-		$ul.find('li').removeClass('selected');
+		$ul.find('li').removeClass('current');
 		
-		$li.addClass('selected');
+		$li.addClass('current');
 	}
 });

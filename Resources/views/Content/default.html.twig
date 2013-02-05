@@ -1,4 +1,4 @@
 <div class="content">
-	<h2>{{ content.header }}</h2>
-	<span class="body">{{ content.body | raw }}</span>
+	{% if content.header %}<h2>{{ content.header }}</h2>{% endif %}
+	{% if content.body %}<span class="body">{{ content.body | raw }}</span>{% endif %}
 </div>

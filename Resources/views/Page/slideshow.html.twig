@@ -1,28 +1,24 @@
-<div id="slideshow-{{ page.id }}" class="slideshow" data-page-id="{{ page.id }}">
-	
-	{% include 'BRSPageBundle:Page:content.html.twig'%}
-	
-	<div class="slide-indicators">
-	
-		{% for key, content_block in content %}
-			
-			<a href="#{{ key+1 }}">{{ key+1 }}</a>
-			
-		{% endfor %}
-		
-	</div>
-	
-	<div class="slide-back"><a href="#">&lt;&lt;</a></div>
-				
-	<div class="slide-next"><a href="#">&gt;&gt;</a></div>
+<div id="slider__{{ page.id }}" class="slider" data-page-id="{{ page.id }}">
+
+	{% include 'BRSPageBundle:Page:content.slideshow.html.twig'%}
+
+	<nav class="slides__nav">
+		<a href="#" class="slide-back icon__prev-round">&larr;</a>
+		<span class="slide-indicators">
+			{% for key, content_block in content %}
+				<a href="#{{ key+1 }}" class="icon__indicator">{{ key+1 }}</a>
+			{% endfor %}
+		</span>
+		<a href="#" class="slide-next icon__next-round">&rarr;</a>
+	</nav>
 
 </div>
 
 <script language="JavaScript">
 	$(function(){
-		
+
 		var slideshow = new SlideWidget({
-			container: '#slideshow-{{ page.id }}',
+			container: '#slider__{{ page.id }}',
 			startSlide: 0,
 			speed: 500,
 			auto: 8000,
