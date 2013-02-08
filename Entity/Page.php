@@ -4,6 +4,7 @@ namespace BRS\PageBundle\Entity;
 
 use BRS\CoreBundle\Core\SuperEntity;
 use BRS\CoreBundle\Core\Utility;
+use BRS\FileBundle\Entity\File;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -18,6 +19,11 @@ use Gedmo\Mapping\Annotation as Gedmo;
  */
 class Page extends SuperEntity
 {
+	/*
+	 * name of root folder that holds all entity sub-folders
+	 */
+    private $root_folder_name = 'Pages';
+	
     /**
      * @var integer $id
      *
@@ -81,23 +87,158 @@ class Page extends SuperEntity
      */
     public $content;
 	
-	/**
-     * @ORM\OneToMany(targetEntity="PageFile", mappedBy="page")
-	 * @ORM\OrderBy({"display_order" = "ASC"})
-     */
-    public $files;
+	
 	
 	
     public function __construct()
     {
         $this->content = new ArrayCollection();
-        $this->files = new ArrayCollection();
     }
 	
 	
-
-    
+	/**
+     * @var integer $dir_id
+     *
+     * @ORM\Column(name="dir_id", type="integer", nullable=TRUE)
+     */
+    public $dir_id;
 	
+	/*
+	 * @ORM\OneToOne(targetEntity="BRS\FileBundle\Entity\File", cascade={"all"}, orphanRemoval=true)
+     * @ORM\JoinColumn(name="dir_id", referencedColumnName="id")
+	 */
+	public $directory;
+	
+	
+	/**
+     * Get name of folder to create for this entity  
+     *
+     * @return string
+     */
+	public function getFolderName(){
+		
+		return $this->getTitle();
+	}
+	
+	/**
+	 * @ORM\PreRemove
+	 */
+	public function removeDirectory()
+	{
+		$dir_id = $this->getDirId();
+		
+		if($dir_id){
+		
+			$dir = $this->em->getReference('\BRS\FileBundle\Entity\File', $dir_id);
+			
+			$this->em->remove($dir);
+		}
+	}
+	
+	/**
+	 * @ORM\PostUpdate
+	 */
+	public function updateDirectory()
+	{
+					
+		$dir_id = $this->getDirId();
+		
+		if($dir_id){
+				
+			$dir = $this->em->getReference('\BRS\FileBundle\Entity\File', $dir_id);
+			
+			$folder_name = $this->getFolderName();
+		
+			$dir->setName($folder_name);
+			
+			$this->em->persist($dir);
+			
+			$this->em->flush();
+		}
+	}
+	
+	/**
+	 * @ORM\PrePersist
+	 */
+	public function createDirectory()
+	{	
+		$dir = new File();
+		
+		$parent = $this->em->getRepository('BRSFileBundle:File')->getRootByName($this->root_folder_name);
+		
+		if($parent){
+		
+			$dir->setParent($parent);
+		
+			$dir->setIsDir(true);
+			
+			$folder_name = $this->getFolderName();
+			
+			$dir->setName($folder_name);
+				
+			$this->directory = $dir;
+			
+			$this->em->persist($dir);
+			
+			$this->em->flush();
+			
+			$this->setDirId($dir->id);
+		}
+	}
+	
+	/**
+     * Get driectory
+     *
+     * @return BRS\FileBundle\Entity\File $dir
+     */
+    public function getDirectory()
+    {
+    	$dir_id = $this->getDirId();
+		
+		if($dir_id){
+				
+			$dir = $this->em->getRepository('BRSFileBundle:File')->findOneById($dir_id);
+			
+			return $dir;
+		}
+    }
+	
+	/**
+     * Get files
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+	public function getFiles(){
+		
+		$file_repo = $this->em->getRepository('BRSFileBundle:File');
+		
+		$dir = $this->getDirectory();
+		
+		$files = $file_repo->children($dir, true);
+		
+		return $files;
+	}
+	
+    /**
+     * Set dir_id
+     *
+     * @param integer $dirId
+     */
+    public function setDirId($dirId)
+    {
+        $this->dir_id = $dirId;
+    }
+
+    /**
+     * Get dir_id
+     *
+     * @return integer 
+     */
+    public function getDirId()
+    {
+        return $this->dir_id;
+    }
+ 	
 	
 	
     /**
@@ -270,13 +411,4 @@ class Page extends SuperEntity
         return $this->content;
     }
 	
-	/**
-     * Get files
-     *
-     * @return Doctrine\Common\Collections\Collection 
-     */
-    public function getFiles()
-    {
-        return $this->files;
-    }
 }
