@@ -68,9 +68,12 @@ class PageController extends WidgetController
 			$rendered_content[] = $this->renderContent($content_block);
 		}
 		
+		$page->setEntityManager($this->getEntityManager());	
+		
 		$vars = array(
 			'page' => $page,
 			'content' => $rendered_content,
+			'files' => $page->getFiles(),
 		);
 		
 		$template = ($page->template) ? $page->template : 'BRSPageBundle:Page:standard.html.twig';
