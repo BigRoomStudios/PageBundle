@@ -172,4 +172,27 @@ class PageFile
     {
         return $this->display_order;
     }
+
+    /**
+     * Set page_id
+     *
+     * @param integer $pageId
+     * @return PageFile
+     */
+    public function setPageId($pageId)
+    {
+        $this->page_id = $pageId;
+    
+        return $this;
+    }
+
+    /**
+     * Get page_id
+     *
+     * @return integer 
+     */
+    public function getPageId()
+    {
+        return $this->page_id;
+    }
 }
