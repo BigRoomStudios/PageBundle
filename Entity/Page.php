@@ -525,4 +525,60 @@ class Page extends SuperEntity
         return $this->content;
     }
 	
+
+    /**
+     * Set created
+     *
+     * @param \DateTime $created
+     * @return Page
+     */
+    public function setCreated($created)
+    {
+        $this->created = $created;
+    
+        return $this;
+    }
+
+    /**
+     * Get created
+     *
+     * @return \DateTime 
+     */
+    public function getCreated()
+    {
+        return $this->created;
+    }
+
+    /**
+     * Set updated
+     *
+     * @param \DateTime $updated
+     * @return Page
+     */
+    public function setUpdated($updated)
+    {
+        $this->updated = $updated;
+    
+        return $this;
+    }
+
+    /**
+     * Get updated
+     *
+     * @return \DateTime 
+     */
+    public function getUpdated()
+    {
+        return $this->updated;
+    }
+
+    /**
+     * Remove content
+     *
+     * @param \BRS\PageBundle\Entity\Content $content
+     */
+    public function removeContent(\BRS\PageBundle\Entity\Content $content)
+    {
+        $this->content->removeElement($content);
+    }
 }
