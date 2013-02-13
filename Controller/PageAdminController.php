@@ -13,6 +13,7 @@ use BRS\AdminBundle\Controller\AdminController;
 use BRS\PageBundle\Entity\Page;
 use BRS\PageBundle\Entity\Content;
 use BRS\PageBundle\Widget\ContentPanel;
+use Symfony\Component\Form\Extension\Core\ChoiceList\SimpleChoiceList;
 
 /**
  * Member controller.
@@ -67,7 +68,20 @@ class PageAdminController extends AdminController
 			'template' => array(
 				'type' => 'text',
 			),
+			
+			'parent' => array(
+				'type' => 'entity',
+				'options' => array(
+					'class' => 'BRSPageBundle:Page',
+					'property' => 'title',
+					'empty_value' => 'No Parent Page',
+					'empty_data' => null,
+					'by_reference' => true,
+				),
+			),
 		);
+		
+		$this->getEntityManager()->getRepository('BRSPageBundle:Page')->get_hierarchy();
 		
 		$page_widget = new EditFormWidget();
 		$page_widget->setFields($edit_fields);

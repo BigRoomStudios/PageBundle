@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * PageController handles front-end dynamic page rendering
@@ -18,7 +19,6 @@ class PageController extends WidgetController
 {
 	
 	protected function getVars($route){
-		
 		$nav = $this->getNav($route);
 		
 		$page = $this->lookupPage($route);

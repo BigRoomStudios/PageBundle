@@ -136,6 +136,8 @@ class PageFrontController extends PageController
 	 */
 	public function pageAction($route)
 	{
+		//die('pageAction');
+
 		$vars = $this->getVars($route);
 			
 		if($this->isAjax()){

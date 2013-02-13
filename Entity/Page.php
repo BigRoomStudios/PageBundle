@@ -9,12 +9,17 @@ use BRS\FileBundle\Entity\File;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Doctrine\Common\Collections\Collection;
+
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * BRS\CoreBundle\Entity\Page
  *
  * @ORM\Table()
  * @ORM\Entity(repositoryClass="BRS\PageBundle\Repository\PageRepository")
+ * @Gedmo\Tree(type="nested")
  * @ORM\HasLifecycleCallbacks()
  */
 class Page extends SuperEntity
@@ -42,7 +47,8 @@ class Page extends SuperEntity
 	
     /**
      * @var string $description
-     *
+     * 
+     * @Gedmo\TreePathSource
      * @ORM\Column(name="description", type="string", length=255, nullable=true)
      */
     public $description;
@@ -60,7 +66,41 @@ class Page extends SuperEntity
      *
      * @ORM\Column(name="template", type="string", length=255, nullable=true)
      */
+    
     public $template;
+
+    /**
+     * @Gedmo\TreeLeft
+     * @ORM\Column(name="lft", type="integer")
+     */
+    private $lft;
+
+    /**
+     * @Gedmo\TreeLevel
+     * @ORM\Column(name="lvl", type="integer")
+     */
+    private $lvl;
+
+    /**
+     * @Gedmo\TreeRight
+     * @ORM\Column(name="rgt", type="integer")
+     */
+    private $rgt;
+
+    /**
+     * @Gedmo\TreeParent
+     * @ORM\ManyToOne(targetEntity="Page", inversedBy="children")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="parent", referencedColumnName="id", onDelete="SET NULL")
+     * })
+     */
+    private $parent;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="Page", mappedBy="parent")
+     * @ORM\OrderBy({"lft" = "ASC"})
+     */
+    private $children;
 	
     /**
      * @var integer $display_order
@@ -87,14 +127,10 @@ class Page extends SuperEntity
      */
     public $content;
 	
-	
-	
-	
     public function __construct()
     {
         $this->content = new ArrayCollection();
     }
-	
 	
 	/**
      * @var integer $dir_id
@@ -140,7 +176,7 @@ class Page extends SuperEntity
 	 */
 	public function updateDirectory()
 	{
-					
+		
 		$dir_id = $this->getDirId();
 		
 		if($dir_id){
@@ -153,15 +189,16 @@ class Page extends SuperEntity
 			
 			$this->em->persist($dir);
 			
-			$this->em->flush();
 		}
+		
 	}
 	
 	/**
 	 * @ORM\PrePersist
 	 */
 	public function createDirectory()
-	{	
+	{
+		
 		$dir = new File();
 		
 		$parent = $this->em->getRepository('BRSFileBundle:File')->getRootByName($this->root_folder_name);
@@ -169,9 +206,9 @@ class Page extends SuperEntity
 		if($parent){
 		
 			$dir->setParent($parent);
-		
-			$dir->setIsDir(true);
 			
+			$dir->setIsDir(true);
+
 			$folder_name = $this->getFolderName();
 			
 			$dir->setName($folder_name);
@@ -180,10 +217,12 @@ class Page extends SuperEntity
 			
 			$this->em->persist($dir);
 			
-			$this->em->flush();
+			$this->em->flush();	// We shouldn't call flush() inside a lifecycle listener...  Heard it was bad, but see no way around this...  :-/
 			
 			$this->setDirId($dir->id);
+			
 		}
+		
 	}
 	
 	/**
@@ -193,14 +232,15 @@ class Page extends SuperEntity
      */
     public function getDirectory()
     {
+    	//Utility::die_dump($this);
+		
     	$dir_id = $this->getDirId();
 		
-		if($dir_id){
-				
-			$dir = $this->em->getRepository('BRSFileBundle:File')->findOneById($dir_id);
-			
-			return $dir;
-		}
+		if(!$this->dir_id)
+			$this->createDirectory();
+		
+		return $this->em->getRepository('BRSFileBundle:File')->findOneById($this->dir_id);
+
     }
 	
 	/**
@@ -209,6 +249,8 @@ class Page extends SuperEntity
      * @return Doctrine\Common\Collections\Collection 
      */
 	public function getFiles(){
+		
+		//throw new NotFoundHttpException("getFiles");
 		
 		$file_repo = $this->em->getRepository('BRSFileBundle:File');
 		
@@ -270,7 +312,79 @@ class Page extends SuperEntity
     {
         return $this->title;
     }
+    
+    /**
+     * Set parent
+     *
+     * @param $parent
+     */
+    public function setParent($parent)
+    {
+ 
+    	if(is_object($parent) && get_class($parent) === 'BRS\PageBundle\Entity\Page')
+    		if($parent->id === $this->id)
+    			throw new \Exception('Can not set Self as Parent.  Tried to set Page('.$parent->id.')\'s parent it\'s self');
+    		else
+	    		$this->parent = $parent;
+    	
+    	elseif (is_numeric($parent))
+    		$this->setParent($this->em->getRepository('BRSPageBundle:Page')->findOneById($parent));
+    	
+    	else
+    		$this->parent = NULL;
+		
+    	$this->em->getRepository('BRSPageBundle:Page')->refresh();
+    	
+    }
 
+    /**
+     * Get parent
+     *
+     * @return \BRS\PageBundle\Entity\Page
+     */
+    public function getParent()
+    {
+		if(is_numeric($parent))
+			$this->setParent($parent);
+		
+		return $this->parent;
+
+    }
+    
+    /**
+     * Set children
+     *
+     * @param Doctrine\Common\Collections\Collection $children
+     */
+    public function setChildren(\Doctrine\Common\Collections\Collection $children)
+    {
+    	foreach ($children as $child)
+    		$child->setParent($this);
+    	
+    	// Replace ArrayCollection
+    	$this->children = $children;
+    }
+    
+    /**
+     * Get children
+     *
+     * @return Doctrine\Common\Collections\Collection
+     */
+    public function getChildren()
+    {
+    	return $this->children;
+    }
+    
+    /**
+     * Add children
+     *
+     * @param \BRS\PageBundle\Entity\Page $child
+     */
+    public function addChildren(\BRS\PageBundle\Entity\Page $child)
+    {
+    	$this->children[] = $child;
+    }
+    
     /**
      * Set description
      *
