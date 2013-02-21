@@ -84,41 +84,6 @@ class PageFrontController extends PageController
 	{	
 		
 		return $this->pageAction('home');
-		
-		/*$nav = $this->getNav('home');
-					
-		$page = $this->lookupPage('home');
-		
-		if(!is_object($page)){
-			
-			return $this->render('BRSFrontBundle:Default:index.html.twig', array('title' => ''));
-		}
-		
-		$rendered = $this->renderPage($page);
-		
-		if($this->isAjax()){
-			
-			$page_values = array(
-				'title' => $page->title,
-				'route' => $page->route,
-				'id' => $page->id,
-			);
-			
-			$values = array(
-				'page' => $page_values,
-				'rendered' => $rendered,
-			);
-		
-			return $this->jsonResponse($values);		
-		}
-		
-		$vars = array(
-			'page' => $page,
-			'rendered' => $rendered,
-			'nav' => $nav,
-		);
-			
-		return $vars;*/
 	}
 	
 	/**
@@ -132,18 +97,13 @@ class PageFrontController extends PageController
 		$route = explode('/', (substr(($route == '/' ? 'home' : $route), -1, 1) === '/' ? substr_replace($route,'',-1) : $route));
 		
 		$vars = $this->getVars($route);
-	
-		//BRS::die_pre($vars['page']->content);	
 		
 		if($this->isAjax()){
 			
 			return $this->jsonResponse($vars);		
 		}
 		
-		$template = ($vars['page']->template) ? $vars['page']->template : 'BRSPageBundle:Page:default.html.twig';
-		$rendered = $this->container->get('templating')->render($template, $vars);
-		
-		return new Response($rendered);
+		return $vars;
 	}
 	
 }
