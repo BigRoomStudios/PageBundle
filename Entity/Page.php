@@ -159,7 +159,7 @@ class Page extends SuperEntity
      */
     public $dir_id;
 	
-	/*
+	/**
 	 * @ORM\OneToOne(targetEntity="BRS\FileBundle\Entity\File", cascade={"all"}, orphanRemoval=true)
      * @ORM\JoinColumn(name="dir_id", referencedColumnName="id")
 	 */
@@ -283,7 +283,7 @@ class Page extends SuperEntity
      */
     public function getDirectory()
     {
-		return $this->em->getRepository('BRSFileBundle:File')->findOneById($this->dir_id);
+		return $this->directory;
 
     }
 	
@@ -294,15 +294,7 @@ class Page extends SuperEntity
      */
 	public function getFiles(){
 		
-		//throw new NotFoundHttpException("getFiles");
-		
-		$file_repo = $this->em->getRepository('BRSFileBundle:File');
-		
-		$dir = $this->getDirectory();
-		
-		$files = $file_repo->children($dir, true);
-		
-		return $files;
+		return $this->getDirectory()->getChildren();
 	}
 	
     /**
