@@ -48,7 +48,7 @@ class PageAdminController extends AdminController
 				'type' => 'text',
 			),*/
 			'title' => array(
-				'label' => 'depth_title',
+				//'label' => 'depth_title',
 				'type' => 'text',
 			),
 			'lft' => array(
