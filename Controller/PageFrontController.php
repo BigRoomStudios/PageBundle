@@ -94,7 +94,6 @@ class PageFrontController extends PageController
 	 */
 	public function pageAction($route)
 	{
-		$route = explode('/', (substr(($route == '/' ? 'home' : $route), -1, 1) === '/' ? substr_replace($route,'',-1) : $route));
 		
 		$vars = $this->getVars($route);
 		

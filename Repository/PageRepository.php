@@ -16,8 +16,11 @@ class PageRepository extends NestedTreeRepository
 		//$this->page_collection = $this->childrenHierarchy();
 	}
 	
-	public function getNav(array $route)
+	public function getNav($route)
 	{	
+		if(!is_array($route))
+			$route = explode('/', (substr(($route == '/' ? 'home' : $route), -1, 1) === '/' ? substr_replace($route,'',-1) : $route));
+		
 		$nav = $this->buildTree(null, array('route' => $route));
 
 		return $nav;
@@ -58,8 +61,9 @@ class PageRepository extends NestedTreeRepository
 		return $branch;
 	}
 
-	public function findOneByRoute(array $route)
+	public function findOneByRoute($route)
 	{
+		$route = explode('/', (substr(($route == '/' ? 'home' : $route), -1, 1) === '/' ? substr_replace($route,'',-1) : $route));
 		
 		foreach(array_reverse($route) as $lvl => $val) {
 			$from[] = 'BRSPageBundle:Page p'.$lvl;
