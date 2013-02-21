@@ -237,6 +237,8 @@ var PageNav = Class.create({
 	
 	set_selected: function(id) {
 		
+		//alert(id);
+		
 		$li = $('#'+id);
 		
 		$ul = $li.closest('ul');
