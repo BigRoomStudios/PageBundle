@@ -81,16 +81,9 @@ class PageFrontController extends PageController
 	 * @Template("BRSPageBundle:Page:default.html.twig")
 	 */
 	public function indexAction()
-	{
+	{	
 		
-		$vars = $this->getVars('home');
-			
-		if($this->isAjax()){
-			
-			return $this->jsonResponse($vars);		
-		}
-			
-		return $vars;
+		return $this->pageAction('home');
 		
 		/*$nav = $this->getNav('home');
 					
@@ -131,21 +124,26 @@ class PageFrontController extends PageController
 	/**
 	 * display page content for a given dynamic route
 	 *
-	 * @Route("/{route}", requirements={"route" = ".*"})
+	 * @Route("/{route}", requirements={"route" = ".+"})
 	 * @Template("BRSPageBundle:Page:default.html.twig")
 	 */
 	public function pageAction($route)
 	{
-		//die('pageAction');
-
+		$route = explode('/', (substr(($route == '/' ? 'home' : $route), -1, 1) === '/' ? substr_replace($route,'',-1) : $route));
+		
 		$vars = $this->getVars($route);
-			
+	
+		//BRS::die_pre($vars['page']->content);	
+		
 		if($this->isAjax()){
 			
 			return $this->jsonResponse($vars);		
 		}
-			
-		return $vars;
+		
+		$template = ($vars['page']->template) ? $vars['page']->template : 'BRSPageBundle:Page:default.html.twig';
+		$rendered = $this->container->get('templating')->render($template, $vars);
+		
+		return new Response($rendered);
 	}
 	
 }

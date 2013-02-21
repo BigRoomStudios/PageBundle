@@ -37,18 +37,24 @@ class Page extends SuperEntity
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     public $id;
-
+    
     /**
      * @var string $title
      *
      * @ORM\Column(name="title", type="string", length=255)
      */
     public $title;
+    
+    /**
+     * @var string $depth_title
+     *
+     * @ORM\Column(name="depth_title", type="string", length=255, nullable=true)
+     */
+    public $depth_title;
 	
     /**
      * @var string $description
      * 
-     * @Gedmo\TreePathSource
      * @ORM\Column(name="description", type="string", length=255, nullable=true)
      */
     public $description;
@@ -56,6 +62,7 @@ class Page extends SuperEntity
     /**
      * @var string $route
      *
+     * @Gedmo\TreePathSource
 	 * @Gedmo\Slug(fields={"title"})
      * @ORM\Column(name="route", type="string", length=255, nullable=true)
      */
@@ -86,21 +93,34 @@ class Page extends SuperEntity
      * @ORM\Column(name="rgt", type="integer")
      */
     private $rgt;
+	
+	/**
+     * @var integer $parent_id
+     *
+     * @ORM\Column(name="parent_id", type="integer", nullable=true)
+     */
+    public $parent_id;
 
     /**
      * @Gedmo\TreeParent
      * @ORM\ManyToOne(targetEntity="Page", inversedBy="children")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="parent", referencedColumnName="id", onDelete="SET NULL")
+     *   @ORM\JoinColumn(name="parent_id", referencedColumnName="id", onDelete="SET NULL")
      * })
      */
-    private $parent;
+    public $parent;
     
     /**
-     * @ORM\OneToMany(targetEntity="Page", mappedBy="parent")
+     * @ORM\OneToMany(targetEntity="Page", mappedBy="parent_id")
      * @ORM\OrderBy({"lft" = "ASC"})
      */
     private $children;
+    
+    /**
+     * @Gedmo\TreeRoot
+     * @ORM\Column(name="root", type="integer", nullable=true)
+     */
+    private $root;
 	
     /**
      * @var integer $display_order
@@ -191,6 +211,8 @@ class Page extends SuperEntity
 			
 		}
 		
+		//$this->updateNesting();
+		
 	}
 	
 	/**
@@ -201,7 +223,7 @@ class Page extends SuperEntity
 		
 		$dir = new File();
 		
-		$parent = $this->em->getRepository('BRSFileBundle:File')->getRootByName($this->root_folder_name);
+		$parent = $this->em->getRepository('BRSFileBundle:File')->getRootByName($this->root_folder_name, TRUE);
 		
 		if($parent){
 		
@@ -223,6 +245,35 @@ class Page extends SuperEntity
 			
 		}
 		
+		//$this->path = 'ass';
+		
+	}
+	
+	/**
+	 * @ORM\PostPersist
+	 */
+	public function postPersist() {
+		$this->updateNesting();
+		
+	}
+	
+	/**
+	 * @ORM\PreUpdate
+	 */
+	public function preUpdate() {
+		$this->updateNesting();
+		
+	}
+	
+	/**
+	 * 
+	 */
+	
+	public function updateNesting(){
+		
+		$this->depth_title = str_repeat('-', $this->getLvl()).$this->title;
+		
+		//die('hello');
 	}
 	
 	/**
@@ -232,13 +283,6 @@ class Page extends SuperEntity
      */
     public function getDirectory()
     {
-    	//Utility::die_dump($this);
-		
-    	$dir_id = $this->getDirId();
-		
-		if(!$this->dir_id)
-			$this->createDirectory();
-		
 		return $this->em->getRepository('BRSFileBundle:File')->findOneById($this->dir_id);
 
     }
@@ -277,7 +321,7 @@ class Page extends SuperEntity
      * @return integer 
      */
     public function getDirId()
-    {
+    {	
         return $this->dir_id;
     }
  	
@@ -314,6 +358,26 @@ class Page extends SuperEntity
     }
     
     /**
+     * Get lvl
+     *
+     * @return string
+     */
+    public function getLvl()
+    {
+    	return $this->lvl;
+    }
+    
+    /**
+     * Get lvl
+     *
+     * @return string
+     */
+    public function getDepthTitle()
+    {
+    	return str_repeat('-', $this->getLvl()).$this->title;
+    }
+    
+    /**
      * Set parent
      *
      * @param $parent
@@ -321,19 +385,18 @@ class Page extends SuperEntity
     public function setParent($parent)
     {
  
-    	if(is_object($parent) && get_class($parent) === 'BRS\PageBundle\Entity\Page')
+    	if(is_object($parent) && (get_class($parent) === 'BRS\PageBundle\Entity\Page' || get_class($parent) === 'Proxies\__CG__\BRS\PageBundle\Entity\Page'))
     		if($parent->id === $this->id)
     			throw new \Exception('Can not set Self as Parent.  Tried to set Page('.$parent->id.')\'s parent it\'s self');
     		else
-	    		$this->parent = $parent;
-    	
+    			$this->parent = $parent;
+    		
+	    		
     	elseif (is_numeric($parent))
     		$this->setParent($this->em->getRepository('BRSPageBundle:Page')->findOneById($parent));
     	
     	else
     		$this->parent = NULL;
-		
-    	$this->em->getRepository('BRSPageBundle:Page')->refresh();
     	
     }
 
@@ -348,6 +411,18 @@ class Page extends SuperEntity
 			$this->setParent($parent);
 		
 		return $this->parent;
+
+    }
+
+    /**
+     * Get parent_id
+     *
+     * @return integer
+     */
+    public function getParentId()
+    {
+		
+		return $this->parent_id;
 
     }
     

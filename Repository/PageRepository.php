@@ -13,63 +13,84 @@ class PageRepository extends NestedTreeRepository
 	public function __construct($em, $class)
 	{
 		parent::__construct($em, $class);
-		$this->page_collection = $this->getEntityManager()
-			->createQuery('SELECT p FROM BRSPageBundle:Page p ORDER BY p.display_order ASC')
-			->getResult();
+		//$this->page_collection = $this->childrenHierarchy();
 	}
 	
-	public function getNav($route, $page_id)
-	{
-		$pages = $this->getEntityManager()
-			->createQuery('SELECT p FROM BRSPageBundle:Page p ORDER BY p.display_order ASC')
-			->getResult();
-			
-		foreach($pages as $key => $page){
-			
-			if($page->route == $route){
+	public function getNav(array $route)
+	{	
+		$nav = $this->buildTree(null, array('route' => $route));
+
+		return $nav;
+	}
+	
+	public function buildTree(array $nodes = null, array $options = null) {
+		$branch = array();
+		
+		if (!isset($nodes))
+			$nodes = $this->getNodesHierarchy();
+		
+		$parent_id = !isset($options['parent_id']) ? '' : $options['parent_id'];
+		$base = !isset($options['base']) ? '' : $options['base'];
+		$route = !isset($options['route']) ? array() : (array) $options['route'];
+		$pre_selected = !isset($options['pre_selected']) ? true : $options['pre_selected'];
+		
+		
+		while ($node = array_shift($nodes)) {
+			if ($node['parent_id'] == $parent_id) {
 				
-				$pages[$key]->selected = true;
+				$node['selected'] = ($pre_selected && @$route[$node['lvl']] == $node['route']) ? true : false;
+				$node['route'] = $base . $node['route'] . '/';
+				
+				$children = $this->buildTree($nodes, array(
+						'parent_id' => $node['id'],
+						'base' => $node['route'],
+						'route' => $route,
+						'pre_selected' => $node['selected']));
+				
+				if ($children) {
+					$node['children'] = $children;
+				}
+				
+				$branch[$node['id']] = $node;
 			}
 		}
+	
+		return $branch;
+	}
+
+	public function findOneByRoute(array $route)
+	{
+		
+		foreach(array_reverse($route) as $lvl => $val) {
+			$from[] = 'BRSPageBundle:Page p'.$lvl;
+			$where[] = 'p'.$lvl .'.route = \''.$val.'\'';
+			$where[] = 'p'.$lvl .'.lvl = '.(count($route)-($lvl+1));
+			if ($lvl > 0)
+				$where [] = 'p' . $lvl .'.id = p' . ($lvl-1) .'.parent_id';
+		}
+	
+		$page = $this->getEntityManager()
+			->createQuery('SELECT p0 FROM ' . implode(', ', $from) . ' WHERE ' . implode(' AND ', $where))
+			->getResult();
+		
+		return array_shift($page);
+		
+	}
+	
+	/**
+	 * 
+	 * DOES NOT WORK, MF...  Some day...
+	 */
+	
+	public function getDropDownList(){
+		
+		$list = Array();
+		
+		$pages = $this->getEntityManager()
+			->createQuery('SELECT p FROM BRSPageBundle:Page p ORDER BY p.root ASC, p.lft ASC')
+			->getResult();
 		
 		return $pages;
-	}
-	
-	public function get_hierarchy ()
-	{
-		$hierarchy = array();
-		
-		foreach( $this->page_collection as $page) {
-			//foreach($page->getChildren() as $child)
-			//if (count($page->children))
-				//Utility::pre_dump($page->children[0]->id);
-			
-		}
-		
-		
-		
-	}
-	
-	public function get_siblings ($page)
-	{
-	
-	}
-	
-	public function get_children ($page)
-	{
-	
-	}
-	
-	public function refresh() {
-		
-		$em = $this->getEntityManager();
-		$repo = $em->getRepository('BRSPageBundle:Page');
-		
-		
-		//print_r('verify '.$repo->verify());
-		//Utility::print_pre('recover '.$repo->recover());
-		//Utility::print_pre('clear '.$em->clear());
-		
 	}
 	
 }

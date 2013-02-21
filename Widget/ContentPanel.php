@@ -62,10 +62,16 @@ class ContentPanel extends PanelWidget
 		$page_id = $this->page->getId();
 		
 		$content->setPageId($page_id);
-		
+		//die(var_dump($content));
 		$this->content_form->setEntity($content);
 		
-		$this->file_list->getById($this->page->dir_id);
+		$id = $this->page->getDirId();
+		
+		if ($id)
+			$this->file_list->getById($id);
+		
+		//die((string) $this->page->getDirId());
+		//$this->file_list->getById($this->page->getDirId());
 	}
 	
 	public function getVars($render = true){

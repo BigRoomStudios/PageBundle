@@ -48,7 +48,23 @@ class PageAdminController extends AdminController
 				'type' => 'text',
 			),*/
 			'title' => array(
+				'label' => 'depth_title',
 				'type' => 'text',
+			),
+			'lft' => array(
+				'type' => 'hidden',		
+			),
+			'rgt' => array(
+				'type' => 'hidden',		
+			),
+			'lvl' => array(
+				'type' => 'hidden',		
+			),
+			'parent_id' => array(
+				'type' => 'hidden',		
+			),
+			'dir_id' => array(
+				'type' => 'hidden',
 			),
 		);
 		
@@ -57,6 +73,7 @@ class PageAdminController extends AdminController
 		$list_widget->setReorderField('display_order');
 		
 		$this->addWidget($list_widget, 'list_pages');
+		$list_widget->setOrderBy(array('root'=>'ASC','lft'=>'ASC'));
 	
 		$edit_fields = array(
 		
@@ -72,21 +89,22 @@ class PageAdminController extends AdminController
 			'parent' => array(
 				'type' => 'entity',
 				'options' => array(
+					'label' => 'Parent',
 					'class' => 'BRSPageBundle:Page',
-					'property' => 'title',
+					'property' => 'depth_title',
 					'empty_value' => 'No Parent Page',
 					'empty_data' => null,
-					'by_reference' => true,
+					'by_reference' => TRUE,
 				),
 			),
 		);
 		
-		$this->getEntityManager()->getRepository('BRSPageBundle:Page')->get_hierarchy();
 		
 		$page_widget = new EditFormWidget();
 		$page_widget->setFields($edit_fields);
 		$page_widget->setSuccessRoute('brs_page_pageadmin_edit');
 		$this->addWidget($page_widget, 'edit_page');
+		
 		
 		$content_panel = new ContentPanel();
 		$content_panel->setPageWidget($page_widget);
