@@ -9,6 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use BRS\CoreBundle\Core\Widget\ListWidget;
 use BRS\CoreBundle\Core\Widget\EditFormWidget;
 use BRS\CoreBundle\Core\Widget\PanelWidget;
+use BRS\CoreBundle\Core\Utility;
 use BRS\AdminBundle\Controller\AdminController;
 use BRS\PageBundle\Entity\Page;
 use BRS\PageBundle\Entity\Content;
@@ -43,34 +44,43 @@ class PageAdminController extends AdminController
 				'width' => 55,
 				'nonentity' => true,
 				'class' => 'btn btn-mini',
+			),	
+			'up' => array(
+					'type' => 'link',
+					'route' => array(
+							'name' => 'brs_page_pageadmin_up',
+							'params' => array('id'),
+					),
+					'nav' => true,
+					'label' => 'up',
+					'width' => 55,
+					'nonentity' => true,
+					'class' => 'btn btn-mini rdr-up',
+			),
+			'down' => array(
+					'type' => 'link',
+					'route' => array(
+							'name' => 'brs_page_pageadmin_down',
+							'params' => array('id'),
+					),
+					'nav' => true,
+					'label' => 'down',
+					'width' => 55,
+					'nonentity' => true,
+					'class' => 'btn btn-mini rdr-dwn',
 			),
 			/*'display_order' => array(
 				'type' => 'text',
 			),*/
 			'title' => array(
-				//'label' => 'depth_title',
+				'label' => 'depth_title',
 				'type' => 'text',
-			),
-			'lft' => array(
-				'type' => 'hidden',		
-			),
-			'rgt' => array(
-				'type' => 'hidden',		
-			),
-			'lvl' => array(
-				'type' => 'hidden',		
-			),
-			'parent_id' => array(
-				'type' => 'hidden',		
-			),
-			'dir_id' => array(
-				'type' => 'hidden',
-			),
+			)
 		);
 		
 		$list_widget = new ListWidget();
 		$list_widget->setListFields($list_fields);
-		$list_widget->setReorderField('display_order');
+		//$list_widget->setReorderField('display_order');
 		
 		$this->addWidget($list_widget, 'list_pages');
 		$list_widget->setOrderBy(array('root'=>'ASC','lft'=>'ASC'));
@@ -97,6 +107,7 @@ class PageAdminController extends AdminController
 					'by_reference' => TRUE,
 				),
 			),
+				
 		);
 		
 		
@@ -126,4 +137,27 @@ class PageAdminController extends AdminController
 		$this->addView('edit', $edit_panel);
 	}
 	
+	/**
+	 * Displays a form to create a new entity for this admin module
+	 *
+	 * @Route("/{id}/up")
+	 */
+	function up($id){
+		$repo = $this->getRepository('BRSPageBundle:Page');
+		$page = $repo->find($id);
+		$repo->moveUp($page,1);
+		return $this->redirect($this->generateUrl('brs_page_pageadmin_index', array( 'ajax' => 1 )));
+	}
+	
+	/**
+	 * Displays a form to create a new entity for this admin module
+	 *
+	 * @Route("/{id}/down")
+	 */
+	function down($id){
+		$repo = $this->getRepository('BRSPageBundle:Page');
+		$page = $repo->find($id);
+		$repo->moveDown($page,1);
+		return $this->redirect($this->generateUrl('brs_page_pageadmin_index', array( 'ajax' => 1 )));
+	}
 }
