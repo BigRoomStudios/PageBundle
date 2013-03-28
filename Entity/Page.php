@@ -61,12 +61,17 @@ class Page extends SuperEntity
 
     /**
      * @var string $route
+     */
+    public $route;
+
+    /**
+     * @var string $slug
      *
      * @Gedmo\TreePathSource
 	 * @Gedmo\Slug(fields={"title"})
-     * @ORM\Column(name="route", type="string", length=255, nullable=true)
+     * @ORM\Column(name="slug", type="string", length=255, nullable=true)
      */
-    public $route;
+    public $slug;
 
     /**
      * @var string $template

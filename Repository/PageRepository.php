@@ -41,8 +41,8 @@ class PageRepository extends NestedTreeRepository
 		while ($node = array_shift($nodes)) {
 			if ($node['parent_id'] == $parent_id) {
 				
-				$node['selected'] = ($pre_selected && @$route[$node['lvl']] == $node['route']) ? true : false;
-				$node['route'] = $base . $node['route'] . '/';
+				$node['selected'] = ($pre_selected && @$route[$node['lvl']] == $node['slug']) ? true : false;
+				$node['route'] = $base . $node['slug'] . '/';
 				
 				$children = $this->buildTree($nodes, array(
 						'parent_id' => $node['id'],
@@ -67,7 +67,7 @@ class PageRepository extends NestedTreeRepository
 		
 		foreach(array_reverse($route) as $lvl => $val) {
 			$from[] = 'BRSPageBundle:Page p'.$lvl;
-			$where[] = 'p'.$lvl .'.route = \''.$val.'\'';
+			$where[] = 'p'.$lvl .'.slug = \''.$val.'\'';
 			$where[] = 'p'.$lvl .'.lvl = '.(count($route)-($lvl+1));
 			if ($lvl > 0)
 				$where [] = 'p' . $lvl .'.id = p' . ($lvl-1) .'.parent_id';
