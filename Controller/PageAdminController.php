@@ -73,7 +73,7 @@ class PageAdminController extends AdminController
 				'type' => 'text',
 			),*/
 			'title' => array(
-				'label' => 'depth_title',
+				'label' => 'title',
 				'type' => 'text',
 			)
 		);
@@ -84,6 +84,7 @@ class PageAdminController extends AdminController
 		
 		$this->addWidget($list_widget, 'list_pages');
 		$list_widget->setOrderBy(array('root'=>'ASC','lft'=>'ASC'));
+		//$list_widget->setFilters();
 	
 		$edit_fields = array(
 		
@@ -101,10 +102,18 @@ class PageAdminController extends AdminController
 				'options' => array(
 					'label' => 'Parent',
 					'class' => 'BRSPageBundle:Page',
-					'property' => 'depth_title',
+					'property' => 'title',
 					'empty_value' => 'No Parent Page',
 					'empty_data' => null,
 					'by_reference' => TRUE,
+					'query_builder' => function($er) {
+						return $er->createQueryBuilder('p')
+							->from('BRS\PageBundle\Entity\Page', 'r')
+							->orderBy('p.lft', 'ASC')
+							->andwhere('p.lft BETWEEN r.lft AND r.rgt')
+							->andWhere('p.id != r.id')
+							->set('r.class_root', 'BRS\PageBundle\Entity\Page');
+					},
 				),
 			),
 				
@@ -145,8 +154,28 @@ class PageAdminController extends AdminController
 	function up($id){
 		$repo = $this->getRepository('BRSPageBundle:Page');
 		$page = $repo->find($id);
-		$repo->moveUp($page,1);
-		return $this->redirect($this->generateUrl('brs_page_pageadmin_index', array( 'ajax' => 1 )));
+		if ($page->getRoot() != $page->getId())
+			$repo->moveUp($page,1);
+		//else
+		//		alert
+		
+		$view = $this->getView('index');
+		
+		$view->handleRequest();
+		
+		$values = array(
+		
+				'view' => $view->render(),
+		);
+		
+		if($this->isAjax()){
+				
+			return $this->jsonResponse($values);
+		}
+		
+		$values = array_merge( $this->getViewValues(), $values );
+		
+		return $values;
 	}
 	
 	/**
@@ -157,7 +186,25 @@ class PageAdminController extends AdminController
 	function down($id){
 		$repo = $this->getRepository('BRSPageBundle:Page');
 		$page = $repo->find($id);
-		$repo->moveDown($page,1);
-		return $this->redirect($this->generateUrl('brs_page_pageadmin_index', array( 'ajax' => 1 )));
+		if ($page->getRoot() != $page->getId())
+			$repo->moveDown($page,1);
+		
+		$view = $this->getView('index');
+		
+		$view->handleRequest();
+		
+		$values = array(
+		
+				'view' => $view->render(),
+		);
+		
+		if($this->isAjax()){
+				
+			return $this->jsonResponse($values);
+		}
+		
+		$values = array_merge( $this->getViewValues(), $values );
+		
+		return $values;
 	}
 }

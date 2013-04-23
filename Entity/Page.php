@@ -14,6 +14,8 @@ use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\HttpFoundation\Request;
 
+use Doctrine\Common\Collections\Criteria;
+
 /**
  * BRS\CoreBundle\Entity\Page
  *
@@ -46,11 +48,11 @@ class Page extends SuperEntity
     public $title;
     
     /**
-     * @var string $depth_title
+     * @var string $class_root
      *
-     * @ORM\Column(name="depth_title", type="string", length=255, nullable=true)
+     * @ORM\Column(name="class_root", type="string", length=255, nullable=true, unique = true)
      */
-    public $depth_title;
+    public $class_root;
 	
     /**
      * @var string $description
@@ -108,7 +110,7 @@ class Page extends SuperEntity
 
     /**
      * @Gedmo\TreeParent
-     * @ORM\ManyToOne(targetEntity="Page", inversedBy="children")
+     * @ORM\ManyToOne(targetEntity="Page", inversedBy="children",cascade={"persist"})
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="parent_id", referencedColumnName="id", onDelete="SET NULL")
      * })
@@ -147,7 +149,7 @@ class Page extends SuperEntity
     private $updated;
 	
 	/**
-     * @ORM\OneToMany(targetEntity="Content", mappedBy="page")
+     * @ORM\OneToMany(targetEntity="Content", mappedBy="page", cascade={"all"}, orphanRemoval=true)
 	 * @ORM\OrderBy({"display_order" = "ASC"})
      */
     public $content;
@@ -181,104 +183,15 @@ class Page extends SuperEntity
 		return $this->getTitle();
 	}
 	
-	/**
-	 * @ORM\PreRemove
-	 */
-	public function removeDirectory()
-	{
-		$dir_id = $this->getDirId();
-		
-		if($dir_id){
-		
-			$dir = $this->em->getReference('\BRS\FileBundle\Entity\File', $dir_id);
-			
-			$this->em->remove($dir);
-		}
-	}
 	
 	/**
-	 * @ORM\PostUpdate
-	 */
-	public function updateDirectory()
-	{
+     * Get name of root for this class  
+     *
+     * @return string
+     */
+	public function getRootName(){
 		
-		$dir_id = $this->getDirId();
-		
-		if($dir_id){
-				
-			$dir = $this->em->getReference('\BRS\FileBundle\Entity\File', $dir_id);
-			
-			$folder_name = $this->getFolderName();
-		
-			$dir->setName($folder_name);
-			
-			$this->em->persist($dir);
-			
-		}
-		
-		//$this->updateNesting();
-		
-	}
-	
-	/**
-	 * @ORM\PrePersist
-	 */
-	public function createDirectory()
-	{
-		
-		$dir = new File();
-		
-		$parent = $this->em->getRepository('BRSFileBundle:File')->getRootByName($this->root_folder_name, TRUE);
-		
-		if($parent){
-		
-			$dir->setParent($parent);
-			
-			$dir->setIsDir(true);
-
-			$folder_name = $this->getFolderName();
-			
-			$dir->setName($folder_name);
-				
-			$this->directory = $dir;
-			
-			$this->em->persist($dir);
-			
-			$this->em->flush();	// We shouldn't call flush() inside a lifecycle listener...  Heard it was bad, but see no way around this...  :-/
-			
-			$this->setDirId($dir->id);
-			
-		}
-		
-		//$this->path = 'ass';
-		
-	}
-	
-	/**
-	 * @ORM\PostPersist
-	 */
-	public function postPersist() {
-		$this->updateNesting();
-		
-	}
-	
-	/**
-	 * @ORM\PreUpdate
-	 */
-	public function preUpdate() {
-		$this->updateNesting();
-		
-	}
-	
-	/**
-	 * 
-	 */
-	
-	public function updateNesting(){
-		
-		$this->depth_title = str_repeat('-', $this->getLvl()).$this->title;
-		
-		//die('hello');
+		return $this->root_folder_name;
 	}
 	
 	/**
@@ -293,14 +206,40 @@ class Page extends SuperEntity
     }
 	
 	/**
+     * Get driectory_id
+     *
+     * @return BRS\FileBundle\Entity\File $dir
+     */
+    public function getDirectoryId()
+    {
+		return $this->dir_id;
+
+    }
+	
+	/**
      * Get files
      *
      * @return Doctrine\Common\Collections\Collection 
      */
 	public function getFiles(){
-		
-		return $this->getDirectory()->getChildren();
+		return $this->getDirectory()
+			->getChildren()
+			->matching(Criteria::create()
+				->where(Criteria::expr()->isNull("is_dir")));
 	}
+	
+    /**
+     * Set directory
+     *
+     * @param integer $dirId
+     */
+    public function setDirectory(\BRS\FileBundle\Entity\File $directory)
+    {
+        $this->dir_id = $directory->getId();
+        $this->directory = $directory;
+    	
+    	return $this;
+    }
 	
     /**
      * Set dir_id
@@ -310,6 +249,8 @@ class Page extends SuperEntity
     public function setDirId($dirId)
     {
         $this->dir_id = $dirId;
+    	
+    	return $this;
     }
 
     /**
@@ -342,6 +283,8 @@ class Page extends SuperEntity
     public function setTitle($title)
     {
         $this->title = $title;
+    	
+    	return $this;
     }
 
     /**
@@ -365,6 +308,16 @@ class Page extends SuperEntity
     }
     
     /**
+     * Get root
+     *
+     * @return string
+     */
+    public function getRoot()
+    {
+    	return $this->root;
+    }
+    
+    /**
      * Get lvl
      *
      * @return string
@@ -382,8 +335,8 @@ class Page extends SuperEntity
     public function setParent($parent)
     {
  
-    	if(is_object($parent) && (get_class($parent) === 'BRS\PageBundle\Entity\Page' || get_class($parent) === 'Proxies\__CG__\BRS\PageBundle\Entity\Page'))
-    		if($parent->id === $this->id)
+    	if(is_object($parent) && $parent instanceof Page)
+    		if($this->id && $parent->id === $this->id)
     			throw new \Exception('Can not set Self as Parent.  Tried to set Page('.$parent->id.')\'s parent it\'s self');
     		else
     			$this->parent = $parent;
@@ -395,6 +348,8 @@ class Page extends SuperEntity
     	else
     		$this->parent = NULL;
     	
+    	return $this;
+    	
     }
 
     /**
@@ -404,7 +359,7 @@ class Page extends SuperEntity
      */
     public function getParent()
     {
-		if(is_numeric($parent))
+		if(is_numeric($this->parent))
 			$this->setParent($parent);
 		
 		return $this->parent;
@@ -435,6 +390,8 @@ class Page extends SuperEntity
     	
     	// Replace ArrayCollection
     	$this->children = $children;
+    	
+    	return $this;
     }
     
     /**
@@ -455,6 +412,62 @@ class Page extends SuperEntity
     public function addChildren(\BRS\PageBundle\Entity\Page $child)
     {
     	$this->children[] = $child;
+    	
+    	return $this;
+    }
+    
+    /**
+     * Set class_root
+     * 
+     * Can only be done on a root node that is NEW.
+     * 
+     * @param Object
+     */
+    public function setClassRoot($object = null)
+    {
+    	if (empty($object) || !is_object($object))
+    		throw new \Exception('$page->setClassRoot($param1) expects parameter 1 to be an object, '.gettype($object).' given.');
+    	elseif (!empty($this->id))
+    		throw new \Exception('$page->setClassRoot($param1) can only be called on a new Entity.  Tried to call on entity: '.$this->id);
+    	
+    	$class = get_class($object);
+    	
+    	$class_title = substr($class, strrpos($class, "\\")+1);
+    	
+    	switch (substr($class_title,-1)){
+    		case 'y':
+    			$class_title = substr($class_title,0,-1).'ies';
+    			break;
+    		case 'h':
+    		case 's':
+    			$class_title .= 'es';
+    			break;
+    		default:
+    			$class_title .= 's';
+    			break;
+    	}
+    	
+    	$this->title = ucfirst($class_title).' Root';
+    	$this->class_root = $class;
+    	
+    	return $this;
+    }
+    
+    /**
+     * is class_root
+     *
+     * Can only be done on a root node that is NEW.
+     *
+     * @param Object
+     */
+    public function isClassRoot($object = null)
+    {
+    	if (empty($object) || !is_object($object))
+    		throw new \Exception('$page->setClassRoot($param1) expects parameter 1 to be an object, '.gettype($object).' given.');
+    	
+    	if (get_class($object) == $this->class_root)
+    		return true;
+    	return false;
     }
     
     /**
@@ -465,6 +478,8 @@ class Page extends SuperEntity
     public function setDescription($description)
     {
         $this->description = $description;
+    	
+    	return $this;
     }
 
     /**
@@ -485,6 +500,8 @@ class Page extends SuperEntity
     public function setRoute($route)
     {
         $this->route = $route;
+    	
+    	return $this;
     }
 
     /**
@@ -505,6 +522,8 @@ class Page extends SuperEntity
     public function setTemplate($template)
     {
         $this->template = $template;
+    	
+    	return $this;
     }
 
     /**
@@ -525,6 +544,8 @@ class Page extends SuperEntity
     public function setDisplayOrder($display_order)
     {
         $this->display_order = $display_order;
+    	
+    	return $this;
     }
 
     /**
@@ -545,6 +566,8 @@ class Page extends SuperEntity
     public function setDateAdded($dateAdded)
     {
         $this->date_added = $dateAdded;
+    	
+    	return $this;
     }
 
     /**
@@ -565,6 +588,8 @@ class Page extends SuperEntity
     public function setDateModified($dateModified)
     {
         $this->date_modified = $dateModified;
+    	
+    	return $this;
     }
 
     /**
