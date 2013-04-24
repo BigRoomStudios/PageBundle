@@ -65,11 +65,11 @@ class PageRepository extends NestedTreeRepository
 			if ($node['parent_id'] == $parent_id) {
 				
 				$node['selected'] = ($pre_selected && @$route[$node['lvl']] == $node['slug']) ? true : false;
-				$node['route'] = $base . $node['slug'] . '/';
+				$node['route'] = $base . $node['slug'];
 				
 				$children = $this->buildTree($nodes, array(
 						'parent_id' => $node['id'],
-						'base' => $node['route'],
+						'base' => $node['route'].'/',
 						'route' => $route,
 						'pre_selected' => $node['selected']));
 				
@@ -98,7 +98,7 @@ class PageRepository extends NestedTreeRepository
 			if ($lvl > 0)
 				$where [] = 'p' . $lvl .'.id = p' . ($lvl-1) .'.parent_id';
 		}
-	error_log('SELECT p0 FROM ' . implode(', ', $from) . ' WHERE ' . implode(' AND ', $where));
+		
 		$page = $this->getEntityManager()
 			->createQuery('SELECT p0 FROM ' . implode(', ', $from) . ' WHERE ' . implode(' AND ', $where))
 			->getResult();

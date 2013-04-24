@@ -25,6 +25,7 @@ class PageFrontController extends PageController
 	 */
 	public function renderAction($route)
 	{
+		
 		$page = $this->lookupPage($route);
 		
 		if(!is_object($page)){
