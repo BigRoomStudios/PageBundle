@@ -6,6 +6,7 @@ use BRS\CoreBundle\Core\WidgetController;
 use BRS\CoreBundle\Core\Utility as BRS;
 
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -81,10 +82,9 @@ class PageFrontController extends PageController
 	 * @Route("/")
 	 * @Template("BRSPageBundle:Page:default.html.twig")
 	 */
-	public function indexAction()
-	{	
+	public function indexAction(Request $request) {	
 		
-		return $this->pageAction('home');
+		return $this->pageAction($request, 'home');
 	}
 	
 	/**
@@ -93,17 +93,43 @@ class PageFrontController extends PageController
 	 * @Route("/{route}", requirements={"route" = ".+"})
 	 * @Template("BRSPageBundle:Page:default.html.twig")
 	 */
-	public function pageAction($route)
-	{
+	public function pageAction(Request $request, $route) {
 		
-		$vars = $this->getVars($route);
+		$register_form = null;
+		
+		//add in the registration form if rendering the home page.  This needs to be generalized
+		if($route == 'home') {
+			
+			//get the form
+			$register_form = $this->get_register_form($request);
+			
+		}
+		
+		$vars = $this->getVars($route, $register_form);
 		
 		if($this->isAjax()){
 			
-			return $this->jsonResponse($vars);		
+			return $this->jsonResponse($vars);
 		}
 		
 		return $vars;
+	}
+	
+	/**
+	 * 
+	 */
+	public function get_register_form(Request $request) {
+		
+		$formFactory = $this->container->get('fos_user.registration.form.factory');
+		$userManager = $this->container->get('fos_user.user_manager');
+		
+		$user = $userManager->createUser();
+		$user->setEnabled(true);
+		
+		$form = $formFactory->createForm();
+		
+		return $form;
+		
 	}
 	
 }

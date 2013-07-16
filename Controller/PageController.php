@@ -17,7 +17,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 class PageController extends WidgetController
 {
 	
-	protected function getVars($route){
+	protected function getVars($route, $form){
 		
 		$nav = $this->getNav($route);
 		
@@ -28,7 +28,7 @@ class PageController extends WidgetController
 			throw $this->createNotFoundException('This is not the page you\'re looking for...');
 		}
 		
-		$rendered = $this->renderPage($page);
+		$rendered = $this->renderPage($page, $form);
 		
 		if($this->isAjax()){
 			
@@ -57,7 +57,7 @@ class PageController extends WidgetController
 	}
 	
 	
-	protected function renderPage($page){
+	protected function renderPage($page, $form) {
 		
 		$content = $page->getContent();
 		
@@ -65,12 +65,13 @@ class PageController extends WidgetController
 		
 		foreach($content as $content_block){
 			
-			$rendered_content[] = $this->renderContent($content_block);
+			$rendered_content[] = $this->renderContent($content_block, $form);
 		}
 		
 		$vars = array(
 			'page' => $page,
 			'content' => $rendered_content,
+			'register_form' => ($form != null ? $form->createView() : null),
 		);
 		
 		$template = ($page->template) ? $page->template : 'BRSPageBundle:Page:standard.html.twig';
@@ -80,11 +81,12 @@ class PageController extends WidgetController
 		return $rendered;	
 	}
 	
-	protected function renderContent($content){
+	protected function renderContent($content, $form){
 		
 		$vars = array(
 		
 			'content' => $content,
+			'register_form' => ($form != null ? $form->createView() : null),
 		);
 		
 		$template = ($content->template) ? $content->template : 'BRSPageBundle:Content:default.html.twig';
