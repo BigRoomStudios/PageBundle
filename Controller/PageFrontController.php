@@ -79,7 +79,7 @@ class PageFrontController extends PageController
 	/**
 	 * Displays the home page
 	 *
-	 * @Route("/")
+	 * @Route("/", name="page_home")
 	 * @Template("BRSPageBundle:Page:default.html.twig")
 	 */
 	public function indexAction(Request $request) {	
