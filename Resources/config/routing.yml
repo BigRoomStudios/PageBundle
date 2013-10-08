@@ -1,3 +1,7 @@
-BRSPageBundle_homepage:
-    pattern:  /hello/{name}
-    defaults: { _controller: BRSPageBundle:Default:index }
+home:
+    pattern:  /
+    defaults: { _controller: BRSPageBundle:PageFront:home }
+    
+page:
+    pattern:  /{page_name}
+    defaults: { _controller: BRSPageBundle:PageFront:page }

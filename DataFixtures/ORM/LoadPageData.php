@@ -18,6 +18,7 @@ class LoadPageData extends AbstractFixture implements OrderedFixtureInterface
 		//create a home page
 		$home = new Page();
 		$home->setTitle('Home');
+		$home->setTemplate('BRSPageBundle:Page:home.html.twig');
 		
 		//save the root page
         $manager->persist($home);

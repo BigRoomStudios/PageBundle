@@ -1,0 +1,13 @@
+{% extends 'BRSFrontBundle:Frame:base.html.twig' %}
+
+{% block body_content %}
+	
+	This is the home page!
+	
+	{% for content in page.getContent() %}
+		
+		{% include content.template|default('BRSPageBundle:Content:default.html.twig') with {'content': content} %}
+		
+	{% endfor %}
+	
+{% endblock %}
