@@ -1,5 +1,9 @@
 <div class="content-container" data-page-id="{{ page.id }}">
 	
+	{% if page.slug != 'home'%}
+		<h1 class="page-title">{{ page.title }}</h1>
+	{% endif %}
+
 	{% include 'BRSPageBundle:Page:content.html.twig'%}
 	
 </div>
