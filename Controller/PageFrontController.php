@@ -103,6 +103,9 @@ class PageFrontController extends PageController
 			//get the form
 			$register_form = $this->get_register_form($request);
 			
+			//create the form view
+			$register_form = $register_form->createView();
+			
 		}
 		
 		$vars = $this->getVars($route, $register_form);

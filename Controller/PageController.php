@@ -52,7 +52,7 @@ class PageController extends WidgetController
 			'rendered' => $rendered,
 			'nav' => $nav,
 		);
-			
+		
 		return $vars;
 	}
 	
@@ -71,7 +71,7 @@ class PageController extends WidgetController
 		$vars = array(
 			'page' => $page,
 			'content' => $rendered_content,
-			'register_form' => ($form != null ? $form->createView() : null),
+			'register_form' => $form,
 		);
 		
 		$template = ($page->template) ? $page->template : 'BRSPageBundle:Page:standard.html.twig';
@@ -83,10 +83,12 @@ class PageController extends WidgetController
 	
 	protected function renderContent($content, $form){
 		
-		$vars = array(
+		//I had to set it on content because passing in a separate template var wasn't working...giving up on figuring out why for now and moving on...
+		$content->register_form = $form;
 		
+		$vars = array(
 			'content' => $content,
-			'register_form' => ($form != null ? $form->createView() : null),
+			'register_form' => $form, //this is not getting passed into the template?!?!?!?!?!
 		);
 		
 		$template = ($content->template) ? $content->template : 'BRSPageBundle:Content:default.html.twig';
