@@ -90,7 +90,7 @@ class PageFrontController extends PageController
 	/**
 	 * display page content for a given dynamic route
 	 *
-	 * @Route("/{route}", requirements={"route" = ".+"})
+	 * @Route("/{route}", requirements={"route" = ".+"}, name="page")
 	 * @Template("BRSPageBundle:Page:default.html.twig")
 	 */
 	public function pageAction(Request $request, $route) {
