@@ -97,8 +97,7 @@ class Content extends SuperEntity
      *
      * @return string 
      */
-    public function getHeader()
-    {
+    public function getHeader() {
         return $this->header;
     }
 

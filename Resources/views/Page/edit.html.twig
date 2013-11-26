@@ -1,0 +1,123 @@
+{% extends 'BRSFrontBundle:Frame:base.html.twig' %}
+
+{% block body_content %}
+	
+	<div class="wrapper">
+		
+		<form class="grid" action="" method="post">
+			
+			<div class="grid-item">{{ form_row(edit_form.title) }}</div>
+			
+			<div class="grid-item">{{ form_row(edit_form.slug) }}</div>
+			
+			<div class="grid-item">{{ form_row(edit_form.description) }}</div>
+			
+			<div class="grid-item">
+				
+				<div class="wrapper content_container" data-prototype="{{ form_widget(edit_form.content.vars.prototype)|e }}">
+					
+					{% for content in edit_form.content %}
+						
+						<div class="grid well">
+							
+							<div class="grid-item one_half">
+								{{ form_row(content.header) }}
+								{{ form_row(content.subHeader) }}
+							</div>
+							
+							<div class="grid-item one_half">
+								{{ form_row(content.body) }}
+							</div>
+							
+						</div>
+						
+					{% endfor %}
+					
+					{#<a href="#" class="button">Add Content Block</a>#}
+					
+				</div>
+				
+			</div>
+			
+			<button type="submit" class="button">Save</button>
+			
+			{{ form_rest(edit_form) }}
+			
+		</form>
+		
+	</div>
+	
+	<script type="text/javascript">
+		
+		$(document).ready(function() {
+			
+			var $collectionHolder;
+			
+			function addTagForm($collectionHolder, $newLinkLi) {
+				
+				// add a delete link to the new form
+    			addTagFormDeleteLink($newFormLi);
+    			
+			    // Get the data-prototype explained earlier
+			    var prototype = $collectionHolder.data('prototype');
+			
+			    // get the new index
+			    var index = $collectionHolder.data('index');
+				
+			    // Replace '__name__' in the prototype's HTML to
+			    // instead be a number based on how many items we have
+			    var newForm = prototype.replace(/__name__/g, index);
+			
+			    // increase the index with one for the next item
+			    $collectionHolder.data('index', index + 1);
+				
+			    // Display the form in the page in an li, before the "Add a tag" link li
+			    var $newFormLi = $('<div class="grid well"></div>').append(newForm);
+			    $newLinkLi.before($newFormLi);
+			    
+			}
+			
+			function addTagFormDeleteLink($tagFormLi) {
+			    var $removeFormA = $('<a href="#" class="button">delete this content block</a>');
+			    $tagFormLi.append($removeFormA);
+			
+			    $removeFormA.on('click', function(e) {
+			        // prevent the link from creating a "#" on the URL
+			        e.preventDefault();
+			
+			        // remove the li for the tag form
+			        $tagFormLi.remove();
+			    });
+			}
+			
+			// setup an "add a tag" link
+			var $addTagLink = $('<a href="#" class="button">Add Content Block</a>');
+			var $newLinkLi = $('<div class="grid well"></div>').append($addTagLink);
+			
+		    // Get the ul that holds the collection of tags
+		    $collectionHolder = $('.content_container');
+			
+		    // add the "add a tag" anchor and li to the tags ul
+		    $collectionHolder.append($newLinkLi);
+			
+			// add a delete link to all of the existing tag form li elements
+		    $collectionHolder.find('.grid').each(function() {
+		        addTagFormDeleteLink($(this));
+		    });
+    		
+		    // count the current form inputs we have (e.g. 2), use that as the new
+		    // index when inserting a new item (e.g. 2)
+		    $collectionHolder.data('index', $collectionHolder.find('.grid').length);
+			
+		    $addTagLink.on('click', function(e) {
+		        // prevent the link from creating a "#" on the URL
+		        e.preventDefault();
+		
+		        // add a new tag form (see next code block)
+		        addTagForm($collectionHolder, $newLinkLi);
+		    });
+		});
+		
+	</script>
+	
+{% endblock %}

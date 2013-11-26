@@ -5,3 +5,7 @@ home:
 page:
     pattern:  /{page_name}
     defaults: { _controller: BRSPageBundle:PageFront:page }
+    
+edit_page:
+    pattern:  /page/edit/{route}
+    defaults: { _controller: BRSPageBundle:EditPage:edit }
