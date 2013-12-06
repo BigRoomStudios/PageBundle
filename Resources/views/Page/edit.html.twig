@@ -56,7 +56,7 @@
 			function addTagForm($collectionHolder, $newLinkLi) {
 				
 				// add a delete link to the new form
-    			addTagFormDeleteLink($newFormLi);
+    			addTagFormDeleteLink($newLinkLi);
     			
 			    // Get the data-prototype explained earlier
 			    var prototype = $collectionHolder.data('prototype');
@@ -77,16 +77,16 @@
 			    
 			}
 			
-			function addTagFormDeleteLink($tagFormLi) {
+			function addTagFormDeleteLink($newLinkLi) {
 			    var $removeFormA = $('<a href="#" class="button">delete this content block</a>');
-			    $tagFormLi.append($removeFormA);
+			    $newLinkLi.append($removeFormA);
 			
 			    $removeFormA.on('click', function(e) {
 			        // prevent the link from creating a "#" on the URL
 			        e.preventDefault();
 			
 			        // remove the li for the tag form
-			        $tagFormLi.remove();
+			        $newLinkLi.remove();
 			    });
 			}
 			
