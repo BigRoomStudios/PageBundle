@@ -52,6 +52,9 @@ class EditPageController extends Controller
 		
 		$twig_vars = array(
 			'edit_form' => $form->createView(),
+			'page' => array(
+				'slug' => 'dashboard',
+			),
 		);
 		
         return $this->render('BRSPageBundle:Page:edit.html.twig', $twig_vars);
