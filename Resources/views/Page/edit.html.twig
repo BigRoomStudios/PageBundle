@@ -1,123 +1,205 @@
 {% extends 'BRSFrontBundle:Frame:base.html.twig' %}
 
 {% block body_content %}
-	
-	<div class="wrapper">
-		
-		<form class="grid" action="" method="post">
-			
-			<div class="grid-item">{{ form_row(edit_form.title) }}</div>
-			
-			<div class="grid-item">{{ form_row(edit_form.slug) }}</div>
-			
-			<div class="grid-item">{{ form_row(edit_form.description) }}</div>
-			
-			<div class="grid-item">
-				
-				<div class="wrapper content_container" data-prototype="{{ form_widget(edit_form.content.vars.prototype)|e }}">
+
+	<div id="adminbody">
+
+		<div id="adminpageedit" class="strip">
+
+			<div class="wrapper">
+
+				<header class="admin-page-header">
+					<h1 class="admin-page-title">Edit page</h1>
+				</header>
+
+				<form id="adminformeditpage" class="admin-form form-edit" action="" method="post">
 					
-					{% for content in edit_form.content %}
+					<div class="grid">
+					
+						<div class="grid-item desk-one_half">
 						
-						<div class="grid well">
-							
-							<div class="grid-item one_half">
-								{{ form_row(content.header) }}
-								{{ form_row(content.subHeader) }}
-							</div>
-							
-							<div class="grid-item one_half">
-								{{ form_row(content.body) }}
-							</div>
-							
+							<fieldset id="admineditpageinfo" class="admin-form-fieldset island">
+						
+								<legend class="admin-form-legend">Page information</legend>
+
+								<div class="admin-form-row">
+									<label for="page_title">Title</label>
+									<input type="text" id="page_title" name="page[title]" value="Home">
+								</div>
+
+								<div class="admin-form-row">
+									<label for="page_slug">Slug</label>
+									<input type="text" id="page_slug" name="page[slug]" value="home">
+								</div>
+
+								<div class="admin-form-row">
+									<label for="page_description">Description</label>
+									<textarea id="page_description" name="page[description]"></textarea>
+								</div>
+
+							</fieldset>
+
 						</div>
 						
-					{% endfor %}
+						<div class="grid-item desk-one_half">
+							
+							<fieldset id="admineditpagecontent" class="admin-form-fieldset island" data-prototype="{{ form_widget(edit_form.content.vars.prototype)|e }}">
+							
+								<legend class="admin-form-legend">Page content</legend>
+
+								<div class="admin-form-row">
+									<label for="page_content_0_header">Header</label>
+									<input type="text" id="page_content_0_header" name="page[content][0][header]" value="Test Header">
+								</div>
+
+								<div class="admin-form-row">
+									<label for="page_content_0_subHeader">Subheader</label>
+									<input type="text" id="page_content_0_subHeader" name="page[content][0][subHeader]">
+								</div>
+
+								<div class="admin-form-row">
+									<label for="page_content_0_body">Body</label>
+									<textarea id="page_content_0_body" name="page[content][0][body]">Test body</textarea>
+								</div>
+
+							</fieldset>
+
+						</div>
+
+					</div>
 					
-					{#<a href="#" class="button">Add Content Block</a>#}
-					
-				</div>
-				
+					<button type="submit" class="button">Save</button>
+
+				</form>
+
 			</div>
-			
-			<button type="submit" class="button">Save</button>
-			
-			{{ form_rest(edit_form) }}
-			
-		</form>
-		
+
+		</div>
+
 	</div>
-	
-	<script type="text/javascript">
+
+	{#<div id="adminbody">
 		
+		<div class="strip">
+			
+			<div class="wrapper">
+
+				<form class="grid" action="" method="post">
+
+					<div class="grid-item">{{ form_row(edit_form.title) }}</div>
+
+					<div class="grid-item">{{ form_row(edit_form.slug) }}</div>
+
+					<div class="grid-item">{{ form_row(edit_form.description) }}</div>
+
+					<div class="grid-item">
+
+						<div class="wrapper content_container" data-prototype="{{ form_widget(edit_form.content.vars.prototype)|e }}">
+
+							{% for content in edit_form.content %}
+
+								<div class="grid well">
+
+									<div class="grid-item one_half">
+										{{ form_row(content.header) }}
+										{{ form_row(content.subHeader) }}
+									</div>
+
+									<div class="grid-item one_half">
+										{{ form_row(content.body) }}
+									</div>
+
+								</div>
+
+							{% endfor %}
+
+						</div>
+
+					</div>
+
+					<button type="submit" class="button">Save</button>
+
+					{{ form_rest(edit_form) }}
+
+				</form>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<script type="text/javascript">
+
 		$(document).ready(function() {
-			
+
 			var $collectionHolder;
-			
+
 			function addTagForm($collectionHolder, $newLinkLi) {
-				
+
 				// add a delete link to the new form
-    			addTagFormDeleteLink($newLinkLi);
-    			
-			    // Get the data-prototype explained earlier
-			    var prototype = $collectionHolder.data('prototype');
-			
-			    // get the new index
-			    var index = $collectionHolder.data('index');
-				
-			    // Replace '__name__' in the prototype's HTML to
-			    // instead be a number based on how many items we have
-			    var newForm = prototype.replace(/__name__/g, index);
-			
-			    // increase the index with one for the next item
-			    $collectionHolder.data('index', index + 1);
-				
-			    // Display the form in the page in an li, before the "Add a tag" link li
-			    var $newFormLi = $('<div class="grid well"></div>').append(newForm);
-			    $newLinkLi.before($newFormLi);
-			    
+				addTagFormDeleteLink($newLinkLi);
+
+				// Get the data-prototype explained earlier
+				var prototype = $collectionHolder.data('prototype');
+
+				// get the new index
+				var index = $collectionHolder.data('index');
+
+				// Replace '__name__' in the prototype's HTML to
+				// instead be a number based on how many items we have
+				var newForm = prototype.replace(/__name__/g, index);
+
+				// increase the index with one for the next item
+				$collectionHolder.data('index', index + 1);
+
+				// Display the form in the page in an li, before the "Add a tag" link li
+				var $newFormLi = $('<div class="grid well"></div>').append(newForm);
+				$newLinkLi.before($newFormLi);
+
 			}
-			
+
 			function addTagFormDeleteLink($newLinkLi) {
-			    var $removeFormA = $('<a href="#" class="button">delete this content block</a>');
-			    $newLinkLi.append($removeFormA);
-			
-			    $removeFormA.on('click', function(e) {
-			        // prevent the link from creating a "#" on the URL
-			        e.preventDefault();
-			
-			        // remove the li for the tag form
-			        $newLinkLi.remove();
-			    });
+				var $removeFormA = $('<a href="#" class="button">delete this content block</a>');
+				$newLinkLi.append($removeFormA);
+
+				$removeFormA.on('click', function(e) {
+					// prevent the link from creating a "#" on the URL
+					e.preventDefault();
+
+					// remove the li for the tag form
+					$newLinkLi.remove();
+				});
 			}
-			
+
 			// setup an "add a tag" link
 			var $addTagLink = $('<a href="#" class="button">Add Content Block</a>');
 			var $newLinkLi = $('<div class="grid well"></div>').append($addTagLink);
-			
-		    // Get the ul that holds the collection of tags
-		    $collectionHolder = $('.content_container');
-			
-		    // add the "add a tag" anchor and li to the tags ul
-		    $collectionHolder.append($newLinkLi);
-			
+
+			// Get the ul that holds the collection of tags
+			$collectionHolder = $('.content_container');
+
+			// add the "add a tag" anchor and li to the tags ul
+			$collectionHolder.append($newLinkLi);
+
 			// add a delete link to all of the existing tag form li elements
-		    $collectionHolder.find('.grid').each(function() {
-		        addTagFormDeleteLink($(this));
-		    });
-    		
-		    // count the current form inputs we have (e.g. 2), use that as the new
-		    // index when inserting a new item (e.g. 2)
-		    $collectionHolder.data('index', $collectionHolder.find('.grid').length);
-			
-		    $addTagLink.on('click', function(e) {
-		        // prevent the link from creating a "#" on the URL
-		        e.preventDefault();
-		
-		        // add a new tag form (see next code block)
-		        addTagForm($collectionHolder, $newLinkLi);
-		    });
+			$collectionHolder.find('.grid').each(function() {
+				addTagFormDeleteLink($(this));
+			});
+
+			// count the current form inputs we have (e.g. 2), use that as the new
+			// index when inserting a new item (e.g. 2)
+			$collectionHolder.data('index', $collectionHolder.find('.grid').length);
+
+			$addTagLink.on('click', function(e) {
+				// prevent the link from creating a "#" on the URL
+				e.preventDefault();
+
+				// add a new tag form (see next code block)
+				addTagForm($collectionHolder, $newLinkLi);
+			});
 		});
-		
-	</script>
-	
+
+	</script>#}
+
 {% endblock %}
