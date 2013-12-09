@@ -53,7 +53,7 @@ class EditPageController extends Controller
 		$twig_vars = array(
 			'edit_form' => $form->createView(),
 			'page' => array(
-				'slug' => 'dashboard',
+				'slug' => 'admin',
 			),
 		);
 		
